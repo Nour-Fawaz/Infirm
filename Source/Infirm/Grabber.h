@@ -1,0 +1,56 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "Grabber.generated.h"
+
+UCLASS()
+class INFIRM_API AGrabber : public AActor
+{
+	GENERATED_BODY()
+	
+public:	
+	// Sets default values for this actor's properties
+	AGrabber();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void GrabItem();
+	
+private:
+	//components
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Box Component", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* BoxComp;
+	UPROPERTY(BlueprintReadOnly, EditInstanceOnly, Category = "Meshes", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* StaticMesh;
+
+	//Player
+	UPROPERTY()
+	class AFirstPersonPlayer* FPP;
+	UPROPERTY()
+	class AFirstPersonController* FPC;
+
+	//Items to grab
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Items To Grab", meta = (AllowPrivateAccess = "true"))
+	TArray<FName> ItemsToGrab;
+	UPROPERTY()
+	TArray<UStaticMeshComponent*> SpawnedMeshes;
+	// List of available sockets to spawn at
+	UPROPERTY(EditAnywhere)
+	TArray<FName> ItemSpawnSockets;
+	int32 CurrentSocketIndex = 0;
+	int32 SocketsOccupied = 0;
+
+	//events
+	UFUNCTION()
+	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+};
