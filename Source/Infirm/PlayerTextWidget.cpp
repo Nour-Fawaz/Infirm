@@ -22,12 +22,12 @@ void UPlayerTextWidget::SetText(FName setText)
 	else if (setText == "FamilyPhoto")
 	{
 		RetText->SetText(FText::FromString("I do recall when this was taken... 'twas near four years past, if memory serves me right."));
-		SetImage("/Game/Images/FamilyPhoto.FamilyPhoto");
+		SetImage("/Game/Assets/Images/FamilyPhoto.FamilyPhoto");
 	}
 	else if (setText == "GarageKey")
 	{
 		RetText->SetText(FText::FromString("A screwdriver... mayhap I might use this to pick open a door."));
-		SetImage("/Game/Images/LockPick.LockPick");
+		SetImage("/Game/Assets/Images/LockPick.LockPick");
 	}
 	else if (setText == "BathroomPhoto")
 	{
@@ -36,7 +36,7 @@ void UPlayerTextWidget::SetText(FName setText)
 	else if (setText == "LivingRoomBookcase")
 	{
 		RetText->SetText(FText::FromString("Jonah gave me this book nearly a year ago, on the day we marked six months together. I remember he meant to propose then, and in his excitement, he bought that foolish father clock for Mother and Father. Now that I think on it, our anniversary was but last month. 'Tis a pity we could not be together to mark the day."));
-		SetImage("/Game/Images/JonahBook.JonahBook");
+		SetImage("/Game/Assets/Images/JonahBook.JonahBook");
 	}
 	else if (setText == "KitchenPantry")
 	{
@@ -95,9 +95,11 @@ void UPlayerTextWidget::ActionButtonOnClicked()
 
 void UPlayerTextWidget::SetImage(FString ImageURL)
 {
+	UKismetSystemLibrary::PrintString(this, TEXT("loading texture"), true, true, FColor::Cyan, 5.0f);
 	UTexture2D* Texture = LoadObject<UTexture2D>(nullptr, *ImageURL);
 	if (Texture && ImageContainer)
 	{
+		UKismetSystemLibrary::PrintString(this, TEXT("texture loaded"), true, true, FColor::Cyan, 5.0f);
 		FSlateBrush Brush;
 		Brush.SetResourceObject(Texture);
 		Brush.ImageSize = FVector2D(Texture->GetSizeX(), Texture->GetSizeY());
