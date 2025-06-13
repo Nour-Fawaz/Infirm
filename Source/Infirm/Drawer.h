@@ -24,17 +24,18 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//----------------------------------PUBLIC ACTIONS--------------------------------------------
 	void OpenDrawer(ADrawer* CurrentDrawer);
 
 private:
 
-	//components
+	//----------------------------------COMPONENTS--------------------------------------------
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Box Component", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
 
-	//widgets
+	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UPlayerTextWidget> PlayerTextWidgetClass;
 	UPROPERTY()
@@ -45,17 +46,17 @@ private:
 	class UDisplayWidget* LockedDrawerWidget;
 	void DestroyAllWidgets();
 
-	//sound effects
+	//----------------------------------SOUND EFFECTS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* OpenDrawerSoundEffect;
 
-	//Player
+	//----------------------------------PLAYER--------------------------------------------
 	UPROPERTY()
 	AFirstPersonPlayer* FPP;
 	UPROPERTY()
 	class AFirstPersonController* FPC;
 
-	//attributes
+	//----------------------------------ATTRIBUTES--------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "Attributes")
 	bool bLocked = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
@@ -63,17 +64,16 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Passkey")
 	FName Passkey;
 	
-	// Movement proeprties
+	//----------------------------------MOVEMENT PROPERTIES--------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	FVector MoveOffset;//how far mover should move when activated
+	FVector MoveOffset;
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float MoveTime = 2.5;//amount of time it takes to move to target
-	bool ShouldMove = false; //boolean to activate mover
+	float MoveTime = 2.5;
 	FVector OriginalLocation;
 	FVector TargetLocation;
 	bool Opening = false;
 
-	//overlap functions
+	//----------------------------------OVERLAP EVENTS--------------------------------------------
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()

@@ -76,7 +76,6 @@ void ADoor::OpenDoor()
 		}
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-		//if the player has the passkey 
 		if (FPP && FPP->ActorHasTag(Passkey)) 
 		{
 			FPC->RemoveFromInventory(Passkey); //if player uses key remove from inventory
@@ -114,7 +113,7 @@ void ADoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Other
 			return; //already showing widget
 		}
 		AFirstPersonPlayer* CheckActor = Cast<AFirstPersonPlayer>(OtherActor);
-		if (CheckActor && DisplayWidgetClass) //check actor and display widget set
+		if (CheckActor && DisplayWidgetClass)
 		{
 			LockedDoorWidget = CreateWidget<UDisplayWidget>(FPC, DisplayWidgetClass);
 
@@ -123,7 +122,7 @@ void ADoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Other
 			{
 				LockedDoorWidget->SetText(2);
 			}
-			LockedDoorWidget->AddToPlayerScreen(); //add widget to player screen
+			LockedDoorWidget->AddToPlayerScreen();
 
 		}
 
@@ -132,12 +131,7 @@ void ADoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Other
 
 void ADoor::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (LockedDoorWidget)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Locked Door Widget being destroyed"));
-		LockedDoorWidget->RemoveFromParent(); //remove widget from player viewport
-		LockedDoorWidget = nullptr;
-	}
+	DestroyAllWidgets();
 }
 
 

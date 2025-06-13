@@ -51,6 +51,8 @@ private:
 	bool bClosed = true;
 	UPROPERTY(EditAnywhere, Category = "Passkey")
 	FName Passkey;
+
+	//----------------------------------MOVEMENT PROPERTIES--------------------------------------------
 	FRotator OriginalRotation;
 	FRotator TargetRotation;
 	UPROPERTY(EditAnywhere, Category = "Rotation")
