@@ -5,41 +5,25 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 
-
+/*
+function: display interaction text on the screen based on the integer value passed in
+*/
 void UDisplayWidget::SetText(int textVal)
 {
-	if (textVal == 0)
+	TMap<int32, FString> TextMap = {
+		{0, "Pick Up"},
+		{1, "Search"},
+		{2, "Locked"},
+		{3, ""},
+		{4, "Empty"},
+		{5, "Read"},
+		{6, "Searched"},
+		{7, "Set Down"}
+	};
+
+	if (FString* TextVal = TextMap.Find(textVal))
 	{
-		RetText->SetText(FText::FromString("Pick Up"));
+		RetText->SetText(FText::FromString(*TextVal));
 	}
-	else if (textVal == 1)
-	{
-		RetText->SetText(FText::FromString("Search"));
-	}
-	else if (textVal == 2)
-	{
-		RetText->SetText(FText::FromString("Locked"));
-	}
-	else if (textVal == 3)
-	{
-		RetText->SetText(FText::FromString(""));
-	}
-	else if (textVal == 4)
-	{
-		RetText->SetText(FText::FromString("Empty"));
-	}
-	else if (textVal == 5)
-	{
-		RetText->SetText(FText::FromString("Read"));
-	}
-	else if (textVal == 6)
-	{
-		RetText->SetText(FText::FromString("Searched"));
-	}
-	else if (textVal == 7)
-	{
-		RetText->SetText(FText::FromString("Set Down"));
-	}
-	
 }
 

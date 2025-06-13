@@ -16,10 +16,9 @@ class INFIRM_API UDisplayWidget : public UUserWidget
 
 
 protected:
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* RetText;
-
-	
 
 public:
 
