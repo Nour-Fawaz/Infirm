@@ -2,7 +2,6 @@
 
 
 #include "EndGameModeBase.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "EndMessageWidget.h"
 #include "FirstPersonPlayer.h"
@@ -13,39 +12,40 @@ void AEndGameModeBase::BeginPlay()
 
 	Super::BeginPlay();
 
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC)
+	//get first person player
+	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (APC)
 	{
-		// Optional: store reference to your custom player class
-		FPP = Cast<AFirstPersonPlayer>(PC->GetPawn());
+		FPP = Cast<AFirstPersonPlayer>(APC->GetPawn());
 	}
 
-	FString CurrentLevel = GetWorld()->GetMapName();
-	CurrentLevel.RemoveFromStart(GetWorld()->StreamingLevelsPrefix); // Remove "UEDPIE_0_" or similar
+	FString CurrentLevel = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
 
+	//check level then display end game widget
 	if (CurrentLevel == "EndGame" && EndMessageWidgetClass)
 	{
 		EndMessageWidget = CreateWidget<UEndMessageWidget>(GetWorld(), EndMessageWidgetClass);
 		if (EndMessageWidget)
 		{
 			EndMessageWidget->AddToViewport();
-			EndMessageWidget->PlayFadeIn(); // Optional, can be done in NativeConstruct
 
 			// Show mouse and lock UI input
-			PC->SetShowMouseCursor(true);
+			APC->SetShowMouseCursor(true);
 
-			FInputModeUIOnly InputMode;
-			InputMode.SetWidgetToFocus(EndMessageWidget->TakeWidget());
-			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			PC->SetInputMode(InputMode);
+			//create input mode for current level
+			FInputModeUIOnly EndGameInputMode;
+			EndGameInputMode.SetWidgetToFocus(EndMessageWidget->TakeWidget()); //display EndMessage widget
+			EndGameInputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); //allow mouse input
+			APC->SetInputMode(EndGameInputMode); //set input mode for player
 
+			//play end game audio
 			if (EndMusic)
 			{
-				UGameplayStatics::PlaySound2D(GetWorld(), EndMusic, 0.4f);
+				UGameplayStatics::PlaySound2D(GetWorld(), EndMusic, 0.5f);
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("EndMusic is NULL!"));
+				UE_LOG(LogTemp, Warning, TEXT("EndMusic is null"));
 			}
 		}
 	}

@@ -19,16 +19,17 @@ public:
 
 private:
 
-	//widgets
+	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UEndMessageWidget> EndMessageWidgetClass;
 	UPROPERTY()
 	class UEndMessageWidget* EndMessageWidget;
 
-	//Player
+	//----------------------------------PLAYER--------------------------------------------
 	UPROPERTY()
 	AFirstPersonPlayer* FPP;
 
+	//----------------------------------MUSIC--------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "Audio")
 	USoundBase* EndMusic;
 };
