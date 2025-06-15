@@ -48,9 +48,16 @@ private:
 	TArray<FName> ItemSpawnSockets;
 	int32 CurrentSocketIndex = 0;
 	int32 SocketsOccupied = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items To Grab", meta = (AllowPrivateAccess = "true"))
+	TMap<FName, FName> ItemSocketMap; // Maps socket names to their corresponding item names
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items To Grab", meta = (AllowPrivateAccess = "true"))
+	TArray<FName> ItemsInSockets;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items To Grab", meta = (AllowPrivateAccess = "true"))
+	UStaticMesh* MeshToSpawn;
 
 	//events
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
+	UFUNCTION()
+	void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

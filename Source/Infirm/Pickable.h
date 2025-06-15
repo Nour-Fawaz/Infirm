@@ -20,7 +20,7 @@ public:
 	//pickup actions
 	UFUNCTION(BlueprintCallable)
 	void PickUp();
-	void Use();
+	//void Use();
 	//FName GetLocationTag(APickable* CurrentPickable);
 	//void ReadNote();
 
@@ -39,8 +39,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	bool bDispNote = false;
+	UFUNCTION(BlueprintCallable)
 	void DestroyAllWidgets();
+	UFUNCTION(BlueprintCallable)
 	TArray<FName> GetPickableTags(APickable* AHasTags);
+	UFUNCTION(BlueprintCallable)
 	void TransferActorTags(TArray<FName> TagsToTransfer, APickable* ATransferTo);
 
 

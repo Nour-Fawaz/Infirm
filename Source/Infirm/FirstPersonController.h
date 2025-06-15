@@ -43,6 +43,8 @@ public:
 	UPROPERTY()
     class APickable* FocusedPickable;
 	UFUNCTION()
+	void DisplayWidgetTextByInt(int textVal);
+	UFUNCTION()
 	void DestroyDisplayWidget();
 
 	UFUNCTION()

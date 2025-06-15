@@ -101,88 +101,59 @@ void USafeDoorWidget::NativeConstruct()
 
 void USafeDoorWidget::ClickButton0()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("0");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("0"));
 }
 
 void USafeDoorWidget::ClickButton1()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("1");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("1"));
 }
 
 void USafeDoorWidget::ClickButton2()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("2");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("2"));
 }
 
 void USafeDoorWidget::ClickButton3()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("3");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("3"));
 }
 
 void USafeDoorWidget::ClickButton4()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("4");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("4"));
 }
 
 void USafeDoorWidget::ClickButton5()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("5");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("5"));
 }
 
 void USafeDoorWidget::ClickButton6()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("6");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("6"));
 }
 
 void USafeDoorWidget::ClickButton7()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("7");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("7"));
 }
 
 void USafeDoorWidget::ClickButton8()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("8");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("8"));
 }
 
 void USafeDoorWidget::ClickButton9()
 {
-	PlayButtonPressedSoundEffect();
-	UserInput += TEXT("9");
-	UserInputText = FText::FromString(UserInput);
-	InputText->SetText(UserInputText);
+	InsertNumber(TEXT("9"));
 }
 
 void USafeDoorWidget::ClickClearButton()
 {
 	PlayButtonPressedSoundEffect();
 	UserInput = TEXT("");
+	NumOfButtonsPressed = 0;
 	UserInputText = FText::FromString(UserInput);
 	InputText->SetText(UserInputText);
 }
@@ -218,6 +189,18 @@ void USafeDoorWidget::ClickExitButton()
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	FPC = Cast<AFirstPersonController>(APC); //get player controller
 	FPC->CloseSafepanelWidget(OwningSafe);
+}
+
+void USafeDoorWidget::InsertNumber(FString InputInt)
+{
+	if (NumOfButtonsPressed < 4)
+	{
+		PlayButtonPressedSoundEffect();
+		UserInput += InputInt;
+		UserInputText = FText::FromString(UserInput);
+		InputText->SetText(UserInputText);
+		NumOfButtonsPressed++;
+	}
 }
 
 void USafeDoorWidget::PlayButtonPressedSoundEffect()

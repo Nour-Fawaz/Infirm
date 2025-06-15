@@ -86,6 +86,10 @@ private:
 	void ClickExitButton();
 
 
+	UFUNCTION()
+	void InsertNumber(FString InputInt);
+	UPROPERTY()
+	int32 NumOfButtonsPressed = 0;
 
 	class AFirstPersonController* FPC;
 	class ASafeDoor* OwningSafe;

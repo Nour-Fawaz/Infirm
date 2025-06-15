@@ -100,6 +100,11 @@ void AFirstPersonController::DisplayerPlayerTextWidget(FName Object)
 	{
 		PlayerTextWidget->SetText(Object);
 		PlayerTextWidget->AddToPlayerScreen();
+		// Freeze player input
+		if (FPP)
+		{
+			FPP->DisableInput(this);
+		}
 		SetInputMode(FInputModeGameAndUI());
 		SetShowMouseCursor(true);
 	}
@@ -109,6 +114,11 @@ void AFirstPersonController::ClosePlayerTextWidget()
 {
 	if (PlayerTextWidget)
 	{
+		//give player input again
+		if (FPP)
+		{
+			FPP->EnableInput(this);
+		}
 		this->SetInputMode(FInputModeGameOnly());
 		this->SetShowMouseCursor(false);
 		PlayerTextWidget->RemoveFromParent();
@@ -211,6 +221,19 @@ void AFirstPersonController::ClosePickUpWidget()
 //	//need to tell safe it is open
 //}
 
+void AFirstPersonController::DisplayWidgetTextByInt(int textVal)
+{
+	if (!DisplayWidgetClass)
+		return;
+
+	if (PickUpWidget == nullptr)
+	{
+		PickUpWidget = CreateWidget<UDisplayWidget>(this, DisplayWidgetClass);
+		PickUpWidget->SetText(textVal);
+		PickUpWidget->AddToViewport();
+	}
+}
+
 void AFirstPersonController::DestroyDisplayWidget()
 {
 	if (PickUpWidget)
@@ -224,6 +247,8 @@ void AFirstPersonController::DestroyDisplayWidget()
 void AFirstPersonController::PauseGame()
 {
 	UE_LOG(LogTemp, Warning, TEXT("PAUSING GAME in FPC"));
+	DestroyDisplayWidget();
+	DestroyAllWidgets();
 	PauseWidget = CreateWidget<UPauseWidget>(this, PauseWidgetClass);
 	if (PauseWidget)
 	{
