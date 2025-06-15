@@ -5,6 +5,9 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
+/*
+function: to be played when constructued
+*/
 void UEndMessageWidget::PlayFadeIn()
 {
 	if (FadeIn)
@@ -13,6 +16,9 @@ void UEndMessageWidget::PlayFadeIn()
 	}
 }
 
+/*
+function: to be played when ContinueButton is clicked
+*/
 void UEndMessageWidget::PlayFadeOut()
 {
 	if (FadeOut)
@@ -38,6 +44,9 @@ void UEndMessageWidget::NativeConstruct()
 	}
 }
 
+/*
+function: once widget fades away open the main menu level
+*/
 void UEndMessageWidget::OnFadeOutFinished()
 {
 	UGameplayStatics::OpenLevel(this, FName("MainMenu"));

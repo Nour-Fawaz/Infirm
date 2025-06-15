@@ -19,7 +19,7 @@ class INFIRM_API AFirstPersonController : public APlayerController
 public:
 	virtual void BeginPlay() override;
 
-	//widgets
+	//----------------------------------WIDGETS--------------------------------------------
 	UFUNCTION()
 	void ReadNoteWidget(class APickable* CurrentPickable);
 	UFUNCTION()
@@ -34,7 +34,6 @@ public:
 	void DisplaySafePanelWidget(class ASafeDoor* SafeDoor);
 	UFUNCTION()
 	void CloseSafepanelWidget(class ASafeDoor* SafeDoor);
-	/*void OpenSafeDoor(FString Code, class ASafeDoor* SafeDoor);*/
 
 	UFUNCTION()
 	void DisplayPickUpWidget(class APickable* Pickable);
@@ -42,6 +41,8 @@ public:
 	void ClosePickUpWidget();
 	UPROPERTY()
     class APickable* FocusedPickable;
+	UFUNCTION()
+	void DisplayWidgetTextByInt(int textVal);
 	UFUNCTION()
 	void DestroyDisplayWidget();
 
@@ -54,9 +55,8 @@ public:
 	void DestroyAllWidgets();
 	UFUNCTION()
 	void CheckExistingQidgets();
-	
 
-	//inventory
+	//----------------------------------INVENTORY--------------------------------------------
 	UFUNCTION()
 	void CheckInventory(class APickable* PickedItem, bool bPicked);
 	UFUNCTION()
@@ -66,10 +66,9 @@ public:
 	UFUNCTION()
 	bool InInventory(FName ItemToCheck);
 	
-
 private:
 
-	//widgets
+	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UNoteWidget> NoteWidgetClass;
 	UPROPERTY()
@@ -89,18 +88,18 @@ private:
 	TSubclassOf<class UDisplayWidget> DisplayWidgetClass;
 	UPROPERTY()
 	class UDisplayWidget* PickUpWidget;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UPauseWidget> PauseWidgetClass;
 	UPROPERTY()
 	class UPauseWidget* PauseWidget;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UMainMenuWidget> MainMenuWidgetClass;
 	UPROPERTY()
 	class UMainMenuWidget* MainMenuWidget;
 
-	
-
-	//items
+	//----------------------------------ITEMS--------------------------------------------
 	UPROPERTY()
 	bool HaveCandle = false;
 	UPROPERTY()
@@ -115,8 +114,10 @@ private:
 	bool HaveSalt = false;
 	UPROPERTY()
 	bool HaveSafeKey = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Items", meta = (AllowPrivateAccess = "true"))
+	TMap<FName, bool> Inventory;
 	
-	//Player
+	//----------------------------------PLAYER--------------------------------------------
 	UPROPERTY()
 	AFirstPersonPlayer* FPP;
 	

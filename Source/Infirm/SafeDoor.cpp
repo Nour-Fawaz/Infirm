@@ -33,8 +33,8 @@ void ASafeDoor::BeginPlay()
 	Super::BeginPlay();
 	
 
-	//BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ASafeDoor::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
-	/*BoxComp->OnComponentEndOverlap.AddDynamic(this, &ASafeDoor::OverlapEnd);*/
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ASafeDoor::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
+	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ASafeDoor::OverlapEnd);
 
 	//get FPP and FPC
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -69,6 +69,7 @@ void ASafeDoor::DisplaySafePanel(ASafeDoor* CurrentSafeDoor)
 {
 	if (!isOpen)
 	{
+		FPC->DestroyDisplayWidget();
 		FPC->DisplaySafePanelWidget(CurrentSafeDoor);
 	}
 }
@@ -126,25 +127,19 @@ void ASafeDoor::OpenSafeDoor()
 
 }
 
-//void ASafeDoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-//	//if (SafePanelWidget)
-//	//{
-//	//	return;
-//	//}
-//	//AFirstPersonPlayer* CheckActor = Cast<AFirstPersonPlayer>(OtherActor);
-//	//if (CheckActor && SafeDoorWidgetClass) //check actor and display widget set
-//	//{
-//	//	if (FPC)
-//	//	{
-//	//		SafePanelWidget = CreateWidget<USafeDoorWidget>(FPC, SafeDoorWidgetClass); //create widget
-//	//	}
-//
-//	//	if (SafePanelWidget)
-//	//	{
-//	//		SafePanelWidget->AddToPlayerScreen(); //add to player screen
-//	//	}
-//
-//	//}
-//}
+void ASafeDoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor)
+		{
+			if (AFirstPersonPlayer* FirstPersonPlayer = Cast<AFirstPersonPlayer>(OtherActor))
+			{
+				FPC->DisplayWidgetTextByInt(8); 
+			}
+		}
+}
+
+void ASafeDoor::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	FPC->DestroyDisplayWidget();
+}
 

@@ -31,6 +31,7 @@ void AGrabber::BeginPlay()
 	Super::BeginPlay();
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AGrabber::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
+	BoxComp->OnComponentEndOverlap.AddDynamic(this, &AGrabber::OverlapEnd);
 	
 	//get FPP and FPC
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -53,94 +54,103 @@ void AGrabber::Tick(float DeltaTime)
 
 }
 
+void AGrabber::GrabItem()
+{
+	if (FPP && FPC)
+	{
+		TArray<FName> FPPTags = FPP->GetEquippedItemActorTags();
+
+		for (FName FPPTag : FPPTags)
+		{
+			UE_LOG(LogTemp, Display, TEXT("is the FPPTag: %s in Items to grab: %d, does the socket map contain it: %d"), *FPPTag.ToString(), ItemsToGrab.Contains(FPPTag), ItemSocketMap.Contains(FPPTag));
+			if (ItemsToGrab.Contains(FPPTag) && !ItemSocketMap.Contains(FPPTag) && FPC->InInventory(FPPTag))
+			{
+				APickable* PickableToSpawn = FPP->GetEquippedItemActor();
+
+				//if PickableToSpawn is valid and we have a socket available
+				if (!PickableToSpawn)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("No pickable item to spawn!"));
+					return;
+				}
+				UE_LOG(LogTemp, Display, TEXT("Current Socket Index: %d"), CurrentSocketIndex);
+
+				if (PickableToSpawn && CurrentSocketIndex < ItemSpawnSockets.Num())
+				{
+					ItemSocketMap.Add(ItemSpawnSockets[CurrentSocketIndex], FPPTag);
+					
+
+					UStaticMeshComponent* SourceMeshComp = Cast<UStaticMeshComponent>(PickableToSpawn->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+					if (!SourceMeshComp) return;
+
+				    MeshToSpawn = SourceMeshComp->GetStaticMesh();
+					if (!MeshToSpawn) return;
+
+					FName SocketName = ItemSpawnSockets[CurrentSocketIndex];
+
+					//spawn
+					if (!StaticMesh->DoesSocketExist(SocketName))
+					{
+						UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist!"), *SocketName.ToString());
+						return;
+					}
+					FVector SpawnLoc = StaticMesh->GetSocketLocation(SocketName);
+					FRotator SpawnRot = StaticMesh->GetSocketRotation(SocketName);
+
+					UStaticMeshComponent* SpawnMesh = NewObject<UStaticMeshComponent>(this);
+					if (SpawnMesh)
+						{
+
+						    FPP->RemoveEquippedItem();
+						    FPC->RemoveFromInventory(FPPTag);
+							SpawnMesh->RegisterComponent();
+							SpawnMesh->SetStaticMesh(MeshToSpawn);
+						    SpawnMesh->AttachToComponent(StaticMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+							UE_LOG(LogTemp, Display, TEXT("Socket %s spawned with item: %s"), *SocketName.ToString(), *FPPTag.ToString());
+							// Safety settings
+							SpawnMesh->SetWorldLocation(SpawnLoc);
+							SpawnMesh->SetWorldRotation(SpawnRot);
+							SpawnMesh->SetVisibility(true);
+							SpawnMesh->SetHiddenInGame(false);
+							SpawnMesh->SetRelativeScale3D(FVector(1.0f));
+							SpawnMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+							SpawnMesh->SetSimulatePhysics(false);
+
+							// Store reference to prevent garbage collection
+							SpawnedMeshes.Add(SpawnMesh);
+
+							CurrentSocketIndex++;
+							FPP->RemoveEquippedItemActor();
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("No more available sockets to spawn items!"));
+				}
+			}
+			if (CurrentSocketIndex == 4)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("GAME ENDED"));
+				UGameplayStatics::OpenLevel(this, FName("EndGame"));
+			}
+		}
+	}
+}
+
 void AGrabber::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor)
 	{
-		AFirstPersonPlayer* FirstPersonPlayer = Cast<AFirstPersonPlayer>(OtherActor);
-		UE_LOG(LogTemp, Display, TEXT("Casted OtherActor in Grabber"))
-
-			if (FirstPersonPlayer && FPC)
-			{
-				TArray<FName> FPPTags = FirstPersonPlayer->GetEquippedItemActorTags();
-
-				for (FName FPPTag : FPPTags)
-				{
-					for (FName TagsWanted : ItemsToGrab)
-					{
-						UE_LOG(LogTemp, Display, TEXT("FPPTag: %s and TagWanted: %s"), *FPPTag.ToString(), *TagsWanted.ToString());
-
-						if (FPPTag == TagsWanted && FPC->InInventory(FPPTag))
-						{
-							// Cache pickable actor BEFORE removing anything
-							APickable* PickableToSpawn = FPP->GetEquippedItemActor();
-
-							FirstPersonPlayer->RemoveEquippedItem();
-							FPC->RemoveFromInventory(FPPTag);
-
-							if (PickableToSpawn && CurrentSocketIndex < ItemSpawnSockets.Num())
-							{
-								UE_LOG(LogTemp, Display, TEXT("EquippedItemActor name: %s"), *PickableToSpawn->GetName());
-
-								UStaticMeshComponent* SourceMeshComp = Cast<UStaticMeshComponent>(PickableToSpawn->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-								if (!SourceMeshComp) return;
-
-								UStaticMesh* MeshToSpawn = SourceMeshComp->GetStaticMesh();
-								if (!MeshToSpawn) return;
-
-								FName SocketName = ItemSpawnSockets[CurrentSocketIndex++];
-
-								if (!StaticMesh->DoesSocketExist(SocketName))
-								{
-									UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist!"), *SocketName.ToString());
-									return;
-								}
-
-								FVector SpawnLoc = StaticMesh->GetSocketLocation(SocketName);
-								FRotator SpawnRot = StaticMesh->GetSocketRotation(SocketName);
-
-								// Debug sphere
-								//DrawDebugSphere(GetWorld(), SpawnLoc, 10.f, 12, FColor::Red, false, 5.0f);
-
-								UStaticMeshComponent* SpawnedMesh = NewObject<UStaticMeshComponent>(this);
-								if (SpawnedMesh)
-								{
-									SpawnedMesh->RegisterComponent();
-									SpawnedMesh->SetStaticMesh(MeshToSpawn);
-									SpawnedMesh->AttachToComponent(StaticMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-
-									// Safety settings
-									SpawnedMesh->SetWorldLocation(SpawnLoc);
-									SpawnedMesh->SetWorldRotation(SpawnRot);
-									SpawnedMesh->SetVisibility(true);
-									SpawnedMesh->SetHiddenInGame(false);
-									SpawnedMesh->SetRelativeScale3D(FVector(1.0f));
-									SpawnedMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-									SpawnedMesh->SetSimulatePhysics(false);
-
-									// Store reference to prevent garbage collection
-									SpawnedMeshes.Add(SpawnedMesh);
-
-									SocketsOccupied++;
-									FPP->RemoveEquippedItemActor();
-								}
-
-								
-							}
-							else
-							{
-								UE_LOG(LogTemp, Warning, TEXT("No more available sockets to spawn items!"));
-							}
-						}
-
-						if (SocketsOccupied == 4)
-						{
-							UE_LOG(LogTemp, Warning, TEXT("GAME ENDED"));
-							UGameplayStatics::OpenLevel(this, FName("EndGame"));
-						}
-					}
-				}
-			}
+		if (AFirstPersonPlayer* FirstPersonPlayer = Cast<AFirstPersonPlayer>(OtherActor))
+		{
+			FPC->DisplayWidgetTextByInt(7);
+		}
 	}
+}
+
+void AGrabber::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UE_LOG(LogTemp, Display, TEXT("Overlap Ended in Grabber"));
+	FPC->DestroyDisplayWidget();
 }
 

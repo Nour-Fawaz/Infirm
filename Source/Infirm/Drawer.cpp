@@ -2,7 +2,6 @@
 
 
 #include "Drawer.h"
-#include "PlayerTextWidget.h"
 #include "FirstPersonController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
@@ -14,6 +13,7 @@ ADrawer::ADrawer()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//set up components
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = StaticMesh;
@@ -26,6 +26,7 @@ void ADrawer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//set up components
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADrawer::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ADrawer::OverlapEnd);
 	
@@ -38,7 +39,7 @@ void ADrawer::BeginPlay()
 
 	}
 
-	//movement
+	//set up movement
 	OriginalLocation = GetActorLocation();
 	TargetLocation = OriginalLocation;
 }
@@ -62,9 +63,12 @@ void ADrawer::Tick(float DeltaTime)
 
 }
 
+/*
+function: function called by other actors to open the drawer
+*/
 void ADrawer::OpenDrawer(ADrawer* CurrentDrawer)
 {
-	//if player does have garage key then unlock the drawer and open
+	//player has garage key then unlock the drawer and open
 	if (!bLocked)
 	{
 		Opening = true;
@@ -72,28 +76,24 @@ void ADrawer::OpenDrawer(ADrawer* CurrentDrawer)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, OpenDrawerSoundEffect, GetActorLocation());
 		}
-		if (LockedDrawerWidget)
-		{
-			LockedDrawerWidget->RemoveFromParent(); //remove widget from player viewport
-			LockedDrawerWidget = nullptr;
-		}
+		DestroyAllWidgets();
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-		//remove key from player's hand IF KEY
-		if (FPP && FPP->ActorHasTag(Passkey)) //SECOND PART CAUSES SCREWDRIVER TO REMAIN
+		if (FPP && FPP->ActorHasTag(Passkey)) 
 		{
-			//FPP->RemoveEquippedItem();
-			FPC->RemoveFromInventory(Passkey); //used key -> remove from inventory
-			FPP->RemoveEquippedItem();
-			//this->Tags.Remove(FName("LockedDrawer")); //door no longer locked
+			FPC->RemoveFromInventory(Passkey); //if player uses key remove from inventory
+			FPP->RemoveEquippedItem(); //remove item from player's hand
 		}
 	}
-	else if (bLocked) //if actor does not have garage key tell FPC to display text saying he needs to pry this open
+	else if (bLocked) //if actor does not have key tell FPC to display text 
 	{
 		FPC->DisplayerPlayerTextWidget("KitchenDrawer");
 	}
 }
 
+/*
+function: destroys active widgets related to Drawer
+*/
 void ADrawer::DestroyAllWidgets()
 {
 	if (LockedDrawerWidget)
@@ -105,54 +105,37 @@ void ADrawer::DestroyAllWidgets()
 
 void ADrawer::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Display, TEXT("In drawer Overlap"));
+	//if the player has the key unlock the drawer
 	if (FPC->InInventory(Passkey))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Actor has key"));
-		if (LockedDrawerWidget)
-		{
-			LockedDrawerWidget->RemoveFromParent(); //remove widget from player viewport
-			LockedDrawerWidget = nullptr;
-		}
+		DestroyAllWidgets();
 		bLocked = false;
-
 	}
 	else
 	{
-		//LockedDoorWidget = nullptr;
-		if (LockedDrawerWidget != nullptr)
+		if (LockedDrawerWidget)
 		{
 			return; // already showing widget
 		}
-		AFirstPersonPlayer* CheckActor = Cast<AFirstPersonPlayer>(OtherActor);
-		check(CheckActor);
-		if (CheckActor && DisplayWidgetClass) //check actor and display widget set
-		{
-			//AFirstPersonController* FirstPersonController = CheckActor->GetController<AFirstPersonController>(); //get player controller
-			check(FPC); // check if controller valid
-			LockedDrawerWidget = CreateWidget<UDisplayWidget>(FPC, DisplayWidgetClass); //create widget
 
-			//check what type of pickable
+		AFirstPersonPlayer* CheckActor = Cast<AFirstPersonPlayer>(OtherActor);
+		if (CheckActor && DisplayWidgetClass) 
+		{
+			LockedDrawerWidget = CreateWidget<UDisplayWidget>(FPC, DisplayWidgetClass); 
+
+			//if the drawer is locked set display text to Locked
 			if (bLocked)
 			{
-				LockedDrawerWidget->SetText(2); //set text of widget to be pickup
+				LockedDrawerWidget->SetText(2);
 			}
-
-
-			LockedDrawerWidget->AddToPlayerScreen(); //add to player screen
-
+			LockedDrawerWidget->AddToPlayerScreen();
 		}
-
 	}
 }
 
 void ADrawer::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (LockedDrawerWidget)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Locked Door Widget being destroyed"));
-		LockedDrawerWidget->RemoveFromParent(); //remove widget from player viewport
-		LockedDrawerWidget = nullptr;
-	}
+	DestroyAllWidgets();
 }
 

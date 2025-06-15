@@ -35,7 +35,7 @@ void UPlayerTextWidget::SetText(FName setText)
 	}
 	else if (setText == "LivingRoomBookcase")
 	{
-		RetText->SetText(FText::FromString("Jonah gave me this book nearly a year ago, on the day we marked six months together. I remember he meant to propose then, and in his excitement, he bought that foolish father clock for Mother and Father. Now that I think on it, our anniversary was but last month. 'Tis a pity we could not be together to mark the day."));
+		RetText->SetText(FText::FromString("Jonah gave me this book nearly a year ago, on the day we'd been together six months. It was such a joyful day, I think on it often. I wish we could have done the same last month, when our one anniversary year came, but these past months have brought such troubles, and things have gone badly since."));
 		SetImage("/Game/Assets/Images/JonahBook.JonahBook");
 	}
 	else if (setText == "KitchenPantry")
@@ -65,6 +65,10 @@ void UPlayerTextWidget::SetText(FName setText)
 	else if (setText == "AlarmClockJonah")
 	{
 		RetText->SetText(FText::FromString("Jonah brought Mother and Father a gift when first they met. I warned him a timepiece was an odd choice, but he thought they might like something a bit different."));
+	}
+	else if (setText == "SisterRoomPaint")
+	{
+		RetText->SetText(FText::FromString("I dearly miss the days when Isabelle would spend hours painting. She would only use the brush Mother and Father gave her for her birthday. I miss them... I miss them all so much."));
 	}
 }
 

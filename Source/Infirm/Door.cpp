@@ -28,8 +28,10 @@ void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//set actor rotation upon spawn
 	OriginalRotation = this->GetActorRotation();
 
+	//set actor attributes
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADoor::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ADoor::OverlapEnd);
 
@@ -48,9 +50,9 @@ void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	//if actor is opening adjust rotation
 	if (Opening)
 	{
-		//UKismetSystemLibrary::PrintString(this, TEXT("in tick moving"), true, true, FColor::Cyan, 5.0f);
 		TargetRotation = OriginalRotation + RotationOffset;
 		FRotator NewRotation = FMath::RInterpConstantTo(GetActorRotation(), TargetRotation, DeltaTime, RotationSpeed);
 		SetActorRotation(NewRotation);
@@ -59,6 +61,9 @@ void ADoor::Tick(float DeltaTime)
 
 }
 
+/*
+function: function called by other actors to open the door
+*/
 void ADoor::OpenDoor()
 {
 	if (!bLocked)
@@ -71,16 +76,17 @@ void ADoor::OpenDoor()
 		}
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-		//remove key from player's hand IF KEY
-		if (FPP && FPP->ActorHasTag(Passkey)) //SECOND PART CAUSES SCREWDRIVER TO REMAIN
+		if (FPP && FPP->ActorHasTag(Passkey)) 
 		{
-			//FPP->RemoveEquippedItem();
-			FPC->RemoveFromInventory(Passkey); //used key -> remove from inventory
+			FPC->RemoveFromInventory(Passkey); //if player uses key remove from inventory
 			this->Tags.Remove(FName("LockedDoor")); //door no longer locked
 		}
 	}
 }
 
+/*
+function: destroys active widgets related to Door
+*/
 void ADoor::DestroyAllWidgets()
 {
 	if (LockedDoorWidget)
@@ -92,7 +98,7 @@ void ADoor::DestroyAllWidgets()
 
 void ADoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("iN OVERLAP."), true, true, FColor::Cyan, 5.0f);
+	//if the player has the key unlock the door
 	if (FPC->InInventory(Passkey))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Actor has key"));
@@ -102,28 +108,21 @@ void ADoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Other
 	}
 	else
 	{
-		//LockedDoorWidget = nullptr;
-		if (LockedDoorWidget != nullptr)
+		if (LockedDoorWidget)
 		{
-			return; // already showing widget
+			return; //already showing widget
 		}
 		AFirstPersonPlayer* CheckActor = Cast<AFirstPersonPlayer>(OtherActor);
-		check(CheckActor);
-		if (CheckActor && DisplayWidgetClass) //check actor and display widget set
+		if (CheckActor && DisplayWidgetClass)
 		{
-			//AFirstPersonController* FirstPersonController = CheckActor->GetController<AFirstPersonController>(); //get player controller
-			check(FPC); // check if controller valid
-			LockedDoorWidget = CreateWidget<UDisplayWidget>(FPC, DisplayWidgetClass); //create widget
+			LockedDoorWidget = CreateWidget<UDisplayWidget>(FPC, DisplayWidgetClass);
 
-			//check what type of pickable
+			//if the door is locked, set display text to Locked
 			if (ActorHasTag("LockedDoor"))
 			{
-				LockedDoorWidget->SetText(2); //set text of widget to be pickup
+				LockedDoorWidget->SetText(2);
 			}
-
-
-			check(LockedDoorWidget); //check widget is valiud
-			LockedDoorWidget->AddToPlayerScreen(); //add to player screen
+			LockedDoorWidget->AddToPlayerScreen();
 
 		}
 
@@ -132,12 +131,7 @@ void ADoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Other
 
 void ADoor::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (LockedDoorWidget)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Locked Door Widget being destroyed"));
-		LockedDoorWidget->RemoveFromParent(); //remove widget from player viewport
-		LockedDoorWidget = nullptr;
-	}
+	DestroyAllWidgets();
 }
 
 

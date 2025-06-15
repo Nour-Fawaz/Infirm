@@ -25,13 +25,12 @@ void AFirstPersonController::BeginPlay()
 		FPP = Cast<AFirstPersonPlayer>(PC->GetPawn());
 		
 	}
-
-	FString CurrentLevel = GetWorld()->GetMapName();
-	CurrentLevel.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
+	FString CurrentLevel = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+	/*FString CurrentLevel = GetWorld()->GetMapName();
+	CurrentLevel.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);*/
 
 	if (CurrentLevel == "MainMenu")
 	{
-		// Show UI and mouse
 		if (MainMenuWidgetClass)
 		{
 			MainMenuWidget = CreateWidget<UMainMenuWidget>(this, MainMenuWidgetClass);
@@ -45,10 +44,20 @@ void AFirstPersonController::BeginPlay()
 	}
 	else
 	{
-		// Set input to game
 		SetInputMode(FInputModeGameOnly());
 		SetShowMouseCursor(false);
 	}
+
+	//setup inventory
+	Inventory = {
+		{ "Candle", HaveCandle },
+		{ "Possession", HavePossession },
+		{ "Incantation", HaveIncantation },
+		{ "KitchenKey", HaveKitchenKey },
+		{ "GarageKey", HaveGarageKey },
+		{ "Salt", HaveSalt },
+		{ "SafeKey", HaveSafeKey }
+	};
 	
 }
 
@@ -88,18 +97,22 @@ void AFirstPersonController::CloseNoteWidget()
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("NoteWidget NULL cannot remove"), true, true, FColor::Red, 5.0f);
+		UE_LOG(LogTemp, Warning, TEXT("NoteWidget null in CloseNoteWidget FPC, cannot remove"))
 	}
 }
 
 void AFirstPersonController::DisplayerPlayerTextWidget(FName Object)
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("IN Player TEXT FPC"), true, true, FColor::Red, 5.0f);
 	PlayerTextWidget = CreateWidget<UPlayerTextWidget>(this, PlayerTextWidgetClass);
 	if (PlayerTextWidget)
 	{
 		PlayerTextWidget->SetText(Object);
 		PlayerTextWidget->AddToPlayerScreen();
+		// Freeze player input
+		if (FPP)
+		{
+			FPP->DisableInput(this);
+		}
 		SetInputMode(FInputModeGameAndUI());
 		SetShowMouseCursor(true);
 	}
@@ -109,6 +122,11 @@ void AFirstPersonController::ClosePlayerTextWidget()
 {
 	if (PlayerTextWidget)
 	{
+		//give player input again
+		if (FPP)
+		{
+			FPP->EnableInput(this);
+		}
 		this->SetInputMode(FInputModeGameOnly());
 		this->SetShowMouseCursor(false);
 		PlayerTextWidget->RemoveFromParent();
@@ -118,8 +136,10 @@ void AFirstPersonController::ClosePlayerTextWidget()
 
 void AFirstPersonController::DisplaySafePanelWidget(ASafeDoor* SafeDoorPanel)
 {
-	UE_LOG(LogTemp, Display, TEXT("IN SAFE PANEL NOTE FPC"))
+	UE_LOG(LogTemp, Display, TEXT("In DisplaySafePanelWidget FPC"))
 	SafePanelWidget = CreateWidget<USafeDoorWidget>(this, SafeDoorWidgetClass);
+
+	//initialize safe door actor for widget
 	SafePanelWidget->SetSafeDoor(SafeDoorPanel);
 	if (SafePanelWidget)
 	{
@@ -160,10 +180,12 @@ void AFirstPersonController::CloseSafepanelWidget(ASafeDoor* SafeDoor)
 
 void AFirstPersonController::DisplayPickUpWidget(APickable* Pickable)
 {
+	//if invalid widget class or pickable return
 	if (!DisplayWidgetClass || !Pickable)
 		return;
 
-	if (PickUpWidget == nullptr)
+	//if widget does not exist, create
+	if (!PickUpWidget)
 	{
 		PickUpWidget = CreateWidget<UDisplayWidget>(this, DisplayWidgetClass);
 		PickUpWidget->AddToViewport();
@@ -171,6 +193,7 @@ void AFirstPersonController::DisplayPickUpWidget(APickable* Pickable)
 
 	FocusedPickable = Pickable;
 
+	//adjust widget text based on pickable tags
 	if (Pickable->ActorHasTag("PickUp"))
 	{
 		PickUpWidget->SetText(0);
@@ -200,16 +223,18 @@ void AFirstPersonController::ClosePickUpWidget()
 	FocusedPickable = nullptr;
 }
 
-//void AFirstPersonController::OpenSafeDoor(FString Code, ASafeDoor* SafeDoor)
-//{
-//	//opens safe door
-//	this->CloseSafepanelWidget();
-//	SafeDoor->DestroyAllWidgets();
-//	FName CodeFName = FName(*Code);
-//	FPP->Tags.Add(CodeFName);
-//
-//	//need to tell safe it is open
-//}
+void AFirstPersonController::DisplayWidgetTextByInt(int textVal)
+{
+	if (!DisplayWidgetClass)
+		return;
+
+	if (PickUpWidget == nullptr)
+	{
+		PickUpWidget = CreateWidget<UDisplayWidget>(this, DisplayWidgetClass);
+		PickUpWidget->SetText(textVal);
+		PickUpWidget->AddToViewport();
+	}
+}
 
 void AFirstPersonController::DestroyDisplayWidget()
 {
@@ -223,7 +248,11 @@ void AFirstPersonController::DestroyDisplayWidget()
 
 void AFirstPersonController::PauseGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PAUSING GAME in FPC"));
+	UE_LOG(LogTemp, Warning, TEXT("Pausing game in FPC"));
+
+	//clear all widgets
+	DestroyDisplayWidget();
+	DestroyAllWidgets();
 	PauseWidget = CreateWidget<UPauseWidget>(this, PauseWidgetClass);
 	if (PauseWidget)
 	{
@@ -231,24 +260,22 @@ void AFirstPersonController::PauseGame()
 		PauseWidget->AddToPlayerScreen();
 		FPP->SetGamePaused(true);
 
-		// Set input mode to Game and UI without locking the mouse
+		// Set input mode to Game and UI while allowing mouse movement
 		FInputModeGameAndUI InputMode;
 		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		InputMode.SetHideCursorDuringCapture(false);
 		SetInputMode(InputMode);
-
 		SetShowMouseCursor(true);
 	}
 }
 
 void AFirstPersonController::UnPauseGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UNPAUSING GAME in FPC"));
+	UE_LOG(LogTemp, Warning, TEXT("Unpausing game in FPC"));
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
 
 	if (FPP)
 	{
-		//FPP->EnableInput(this);
 		FPP->SetGamePaused(false);
 	}
 	SetInputMode(FInputModeGameOnly());
@@ -264,13 +291,13 @@ void AFirstPersonController::UnPauseGame()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PauseWidget was nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("PauseWidget nullptr"));
 	}
-
-	//DestroyAllWidgets(); // optional safety
 }
 
-
+/*
+function: destroys all widgets excluding MainMenu, Pause and Display widgets
+*/
 void AFirstPersonController::DestroyAllWidgets()
 {
 	if (NoteWidget)
@@ -278,35 +305,31 @@ void AFirstPersonController::DestroyAllWidgets()
 		NoteWidget->RemoveFromParent();
 		NoteWidget = nullptr;
 	}
-
 	if (PlayerTextWidget)
 	{
 		PlayerTextWidget->RemoveFromParent();
 		PlayerTextWidget = nullptr;
 	}
-
 	if (SafePanelWidget)
 	{
 		SafePanelWidget->RemoveFromParent();
 		SafePanelWidget = nullptr;
 	}
-
-	/*SetInputMode(FInputModeGameOnly());
-	SetShowMouseCursor(false);*/
 }
 
+/*
+function: checks for alive widgets
+*/
 void AFirstPersonController::CheckExistingQidgets()
 {
 	if (NoteWidget)
 	{
 		UE_LOG(LogTemp, Display, TEXT("NOTE WIDGET ALIVE"));
 	}
-
 	if (PlayerTextWidget)
 	{
 		UE_LOG(LogTemp, Display, TEXT("PLAYER TEXT WIDGET ALIVE"));
 	}
-
 	if (SafePanelWidget)
 	{
 		UE_LOG(LogTemp, Display, TEXT("SAFE PANEL WIDGET ALIVE"));
@@ -315,12 +338,21 @@ void AFirstPersonController::CheckExistingQidgets()
 	{
 		UE_LOG(LogTemp, Display, TEXT("PICK UP WIDGET ALIVE FPC"));
 	}
+	if (MainMenuWidget)
+	{
+		UE_LOG(LogTemp, Display, TEXT("MAIN MENU WIDGET ALIVE FPC"));
+	}
+	if (PauseWidget)
+	{
+		UE_LOG(LogTemp, Display, TEXT("PAUSE GAME WIDGET ALIVE FPC"));
+	}
 }
 
 
 
 /*
-NOTE: We will treat the tags as an inventory but the BOOLS as constants. Meaning if the character got a key and used it, they still "have" the key.
+function: adds/removes item from inventory based on the tags of the picked item.
+NOTE: tags are treated as part of player inventory, bools are treated as constants (once an object is obtained the bool remains)
 */
 void AFirstPersonController::CheckInventory(APickable* PickedItem, bool bPicked)
 {
@@ -331,45 +363,41 @@ void AFirstPersonController::CheckInventory(APickable* PickedItem, bool bPicked)
 		if (PickedItem->ActorHasTag("Candle"))
 		{
 			HaveCandle = true;
-			const FString msg = FString::Printf(TEXT("Candle Bool Status: %d"), HaveCandle);
-			UKismetSystemLibrary::PrintString(this, *msg, true, true, FColor::Cyan, 5.0f);
+			UE_LOG(LogTemp, Display, TEXT("Candle Bool Status: %d"), HaveCandle);
 		}
 		else if (PickedItem->ActorHasTag("Possession"))
 		{
 			HavePossession = true;
-			const FString msg = FString::Printf(TEXT("Possession Bool Status: %d"), HavePossession);
-			UKismetSystemLibrary::PrintString(this, *msg, true, true, FColor::Cyan, 5.0f);
+			UE_LOG(LogTemp, Display, TEXT("Possession Bool Status: %d"), HavePossession);
 		}
 		else if (PickedItem->ActorHasTag("Incantation"))
 		{
 			HaveIncantation = true;
-			const FString msg = FString::Printf(TEXT("Incantation Bool Status: %d"), HaveIncantation);
-			UKismetSystemLibrary::PrintString(this, *msg, true, true, FColor::Cyan, 5.0f);
+			UE_LOG(LogTemp, Display, TEXT("Incantation Bool Status: %d"), HaveIncantation);
 		}
 		else if (PickedItem->ActorHasTag("KitchenKey"))
 		{
 			HaveKitchenKey = true;
-			const FString msg = FString::Printf(TEXT("kitchen key Bool Status: %d"), HaveKitchenKey);
-			UKismetSystemLibrary::PrintString(this, *msg, true, true, FColor::Cyan, 5.0f);
+			UE_LOG(LogTemp, Display, TEXT("Kitchen Key Bool Status: %d"), HaveKitchenKey);
 			if (FPP)
 			{
 				FPP->Tags.Add("KitchenKey");
+				UE_LOG(LogTemp, Display, TEXT("Kitchen Key added to Inventory"));
 			}
 		}
 		else if (PickedItem->ActorHasTag("Salt"))
 		{
 			HaveSalt = true;
-			const FString msg = FString::Printf(TEXT("Salt Bool Status: %d"), HaveSalt);
-			UKismetSystemLibrary::PrintString(this, *msg, true, true, FColor::Cyan, 5.0f);
+			UE_LOG(LogTemp, Display, TEXT("Salt Bool Status: %d"), HaveSalt);
 		}
 		else if (PickedItem->ActorHasTag("SafeKey"))
 		{
 			HaveSafeKey = true;
-			const FString msg = FString::Printf(TEXT("SafeKey Bool Status: %d"), HaveSafeKey);
-			UKismetSystemLibrary::PrintString(this, *msg, true, true, FColor::Cyan, 5.0f);
+			UE_LOG(LogTemp, Display, TEXT("Safe Key Bool Status: %d"), HaveSafeKey);
 			if (FPP)
 			{
 				FPP->Tags.Add("SafeKey");
+				UE_LOG(LogTemp, Display, TEXT("Safe Key added to Inventory"));
 			}
 		}
 		
@@ -403,37 +431,22 @@ void AFirstPersonController::CheckInventory(APickable* PickedItem, bool bPicked)
 			if (FPP)
 			{
 				FPP->Tags.Remove(FName("KitchenKey"));
+				UE_LOG(LogTemp, Display, TEXT("KitchenKey removed from Inventory"));
 			}
 			UE_LOG(LogTemp, Display, TEXT("KitchenKey bool status: %d"), HaveKitchenKey);
 		}
 		else if (PickedItem->ActorHasTag("SafeKey"))
 		{
 			HaveSafeKey = false;
+			UE_LOG(LogTemp, Display, TEXT("SafeKey bool status: %d"), HaveKitchenKey);
 			if (FPP)
 			{
 				FPP->Tags.Remove(FName("SafeKey"));
+				UE_LOG(LogTemp, Display, TEXT("SafeKey removed from Inventory"));
 			}
-			UE_LOG(LogTemp, Display, TEXT("SafeKey bool status: %d"), HaveKitchenKey);
+			
 		}
-		/*else if (PickedItem->ActorHasTag("GarageKey"))
-		{
-			if (FPP)
-				{
-					FPP->Tags.Remove("GarageKey");
-				}
-			UE_LOG(LogTemp, Display, TEXT("GarageKey removed from inventory"));
-		}
-		else if (PickedItem->ActorHasTag("KitchenKey"))
-		{
-			if (FPP)
-			{
-				FPP->Tags.Remove("GarageKey");
-			}
-			UE_LOG(LogTemp, Display, TEXT("KitchenKey removed form inventory"));
-		}*/
 	}
-
-
 }
 
 void AFirstPersonController::CheckInventoryName(const FName& NewItem)
@@ -531,3 +544,4 @@ bool AFirstPersonController::InInventory(FName ItemToCheck)
 
 	return false;
 }
+

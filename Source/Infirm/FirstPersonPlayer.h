@@ -92,7 +92,7 @@ private:
 	void EquipItem(APickable* TempPickable, AFirstPersonController* FPC);
 
 
-	//sound effects
+	//----------------------------------SOUND EFFECTS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* PickUpSoundEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))

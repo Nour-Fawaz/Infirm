@@ -18,7 +18,8 @@ void UDisplayWidget::SetText(int textVal)
 		{4, "Empty"},
 		{5, "Read"},
 		{6, "Searched"},
-		{7, "Set Down"}
+		{7, "Set Down"},
+		{8, "Use"}
 	};
 
 	if (FString* TextVal = TextMap.Find(textVal))

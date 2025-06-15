@@ -19,6 +19,7 @@
 #include "SafeDoor.h"
 #include "TriggerComponent.h"
 #include "Drawer.h"
+#include "Grabber.h"
 
 // Sets default values
 AFirstPersonPlayer::AFirstPersonPlayer()
@@ -231,6 +232,11 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 				ADrawer* TempDrawer = Cast<ADrawer>(CurrentActor);
 				TempDrawer->OpenDrawer(TempDrawer);
 			}
+			else if (CurrentActor->ActorHasTag("Grabber"))
+			{
+				AGrabber* TempGrabber = Cast<AGrabber>(CurrentActor);
+				TempGrabber->GrabItem();
+			}
 			else if (CurrentActor->ActorHasTag("Note"))
 			{
 				//DESTROY ALL CURRENT WIDGETS
@@ -285,7 +291,7 @@ void AFirstPersonPlayer::Tick(float DeltaTime)
 
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AFirstPersonController* FPC = Cast<AFirstPersonController>(APC); //get player controller
-	FPC->CheckExistingQidgets();
+	//FPC->CheckExistingQidgets();
 
 }
 
