@@ -28,7 +28,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SearchItem(UStaticMeshComponent* CurrentEquippedItem, bool& HasEquippedItem);
+	void SearchItem();
 
 	bool Searched = false;
 	void DestroyAllWidgets();

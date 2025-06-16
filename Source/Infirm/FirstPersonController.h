@@ -99,7 +99,7 @@ private:
 	UPROPERTY()
 	class UMainMenuWidget* MainMenuWidget;
 
-	//----------------------------------ITEMS--------------------------------------------
+	//----------------------------------INVENTORY--------------------------------------------
 	UPROPERTY()
 	bool HaveCandle = false;
 	UPROPERTY()
@@ -114,8 +114,6 @@ private:
 	bool HaveSalt = false;
 	UPROPERTY()
 	bool HaveSafeKey = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Items", meta = (AllowPrivateAccess = "true"))
-	TMap<FName, bool> Inventory;
 	
 	//----------------------------------PLAYER--------------------------------------------
 	UPROPERTY()

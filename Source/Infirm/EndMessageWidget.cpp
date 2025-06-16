@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 
 /*
-function: to be played when constructued
+* function: to be played when constructued
 */
 void UEndMessageWidget::PlayFadeIn()
 {
@@ -17,7 +17,7 @@ void UEndMessageWidget::PlayFadeIn()
 }
 
 /*
-function: to be played when ContinueButton is clicked
+* function: to be played when ContinueButton is clicked
 */
 void UEndMessageWidget::PlayFadeOut()
 {
@@ -45,7 +45,7 @@ void UEndMessageWidget::NativeConstruct()
 }
 
 /*
-function: once widget fades away open the main menu level
+* function: once widget fades away open the main menu level
 */
 void UEndMessageWidget::OnFadeOutFinished()
 {

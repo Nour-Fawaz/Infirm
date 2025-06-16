@@ -38,18 +38,27 @@ AFirstPersonPlayer::AFirstPersonPlayer()
 
 
 }
-/* Function: "Removes" whatever is in player's hand */
+
+/* 
+* function: "Removes" whatever is in player's hand 
+*/
 void AFirstPersonPlayer::RemoveEquippedItem()
 {
 	EquippedItem->SetStaticMesh(nullptr);
 	ItemEquipped = false;
 }
 
+/*
+* function: sets equipped item actor to nullptr
+*/
 void AFirstPersonPlayer::RemoveEquippedItemActor()
 {
 	EquippedItemActor = nullptr;
 }
 
+/*
+* function: returns tags of currently equippeditem
+*/
 TArray<FName> AFirstPersonPlayer::GetEquippedItemActorTags()
 {
 	return EquippedItemActorTags;
@@ -93,19 +102,7 @@ void AFirstPersonPlayer::BeginPlay()
 		UE_LOG(LogTemp, Display, TEXT("Have mesh"));
 
 	}
-	/*if (SkeletalMesh && SkeletalMesh->SkeletalMesh)
-	{
-		const int32 NumBones = SkeletalMesh->GetNumBones();
-		for (int32 BoneIndex = 0; BoneIndex < NumBones; ++BoneIndex)
-		{
-			FName BoneName = SkeletalMesh->GetBoneName(BoneIndex);
-			UE_LOG(LogTemp, Log, TEXT("Bone %d: %s"), BoneIndex, *BoneName.ToString());
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SkeletalMesh or its SkeletalMesh asset is null."));
-	}*/
+	//setup socket for equippedItem
 	FName BoneName(TEXT("Bone02Socket"));
 	if (SkeletalMesh && SkeletalMesh->DoesSocketExist(BoneName))
 	{
@@ -115,13 +112,7 @@ void AFirstPersonPlayer::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Bone '%s' does not exist on the skeletal mesh!"), *BoneName.ToString());
-		// Handle error (e.g., fallback attachment, skip, etc.)
-	}
-	
-	//overlapping
-	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &AFirstPersonPlayer::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
-
-	
+	}	
 }
 
 void AFirstPersonPlayer::Move(const FInputActionValue& Value)
@@ -145,6 +136,9 @@ void AFirstPersonPlayer::Look(const FInputActionValue& Value)
 	}
 }
 
+/*
+* function: handles player and actor interactions
+*/
 void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 {
 	//get FPC 
@@ -177,21 +171,10 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 				}
 				else if (ItemEquipped && FPC && EquippedItemActor)
 				{
-					//set pickable down
-					UE_LOG(LogTemp, Log, TEXT("Set Pickable Down"));
-					check(TempPickable);
-					check(EquippedItemActor);
-					check(EquippedItem);
-					UE_LOG(LogTemp, Log, TEXT("TempPickabel: %s. Current Equipped Item Actor: %s, EquippedItem: %s"), *TempPickable->GetName(), *EquippedItemActor->GetName(), *EquippedItem->GetName());
-					
-					/*if (EquippedItemActor)
+					if (TempPickable && EquippedItemActor && EquippedItem)
 					{
-						EquippedItemActor->DestroyAllWidgets();
+						UE_LOG(LogTemp, Log, TEXT("TempPickabel: %s. Current Equipped Item Actor: %s, EquippedItem: %s"), *TempPickable->GetName(), *EquippedItemActor->GetName(), *EquippedItem->GetName());
 					}
-					else if (ASearchable* TempSearchable = Cast<ASearchable>(CurrentActor))
-					{
-						TempSearchable->DestroyAllWidgets();
-					}*/
 					//drop equipped item
 					FPC->DestroyAllWidgets();
 					FPC->DestroyDisplayWidget();
@@ -200,20 +183,16 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 					EquipItem(TempPickable, FPC);
 					break;
 				}
-
 			}
 			else if (CurrentActor->ActorHasTag("Searchable"))
 			{
-				UKismetSystemLibrary::PrintString(this, TEXT("This is a SEARCHABLE"), true, true, FColor::Cyan, 5.0f);
+				UE_LOG(LogTemp, Display, TEXT("this is a searchable"));
 				ASearchable* TempSearchable = Cast<ASearchable>(CurrentActor);
-				FString ItemFound = FString(TEXT("None"));
-				//if you are not already holding a pickable
 				if (TempSearchable && FPC)
 				{
 					TempSearchable->DestroyAllWidgets();
-					TempSearchable->SearchItem(EquippedItem, ItemEquipped);
-				}
-				
+					TempSearchable->SearchItem();
+				}	
 			}
 			else if (CurrentActor->ActorHasTag("Door"))
 			{
@@ -239,22 +218,19 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 			}
 			else if (CurrentActor->ActorHasTag("Note"))
 			{
-				//DESTROY ALL CURRENT WIDGETS
 				if (APickable* TempPickable = Cast<APickable>(CurrentActor))
 				{
+					//clear all possible widgets
 					TempPickable->DestroyAllWidgets();
 					FPC->DestroyDisplayWidget();
-					UE_LOG(LogTemp, Warning, TEXT("THIS CURRENT ACTOR IS: %s"), *CurrentActor->GetName());
-					FPC->ReadNoteWidget(TempPickable); /////////////////////////////////////
+					UE_LOG(LogTemp, Warning, TEXT("This note is: %s"), *CurrentActor->GetName());
+					FPC->ReadNoteWidget(TempPickable);
 				}
 				else if (ASearchable* TempSearchable = Cast<ASearchable>(CurrentActor))
 				{
 					TempSearchable->DestroyAllWidgets();
 				}
-				//UE_LOG(LogTemp, Warning, TEXT("THIS CURRENT ACTOR IS: %s"), *CurrentActor->GetName());
-				//FPC->ReadNoteWidget("SpawnRoom"); /////////////////////////////////////
-			}
-			
+			}	
 		}
 	}
 }
@@ -272,26 +248,13 @@ void AFirstPersonPlayer::PauseGame(const FInputActionValue& Value)
 			FPC->PauseGame();
 			UE_LOG(LogTemp, Warning, TEXT("PAUSING GAME, bGamePaused: %b"), bGamePaused);
 		}
-		/*else
-		{
-			bGamePaused = false;
-			FPC->UnPauseGame();
-			UE_LOG(LogTemp, Warning, TEXT("GAME UNPAUSING, bGamePaused: %b"), bGamePaused);
-		}*/
 	}
 }
-
-
-
 
 // Called every frame
 void AFirstPersonPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AFirstPersonController* FPC = Cast<AFirstPersonController>(APC); //get player controller
-	//FPC->CheckExistingQidgets();
 
 }
 
@@ -308,66 +271,56 @@ void AFirstPersonPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Started, this, &AFirstPersonPlayer::PickUpItem); // find how to fix for bool
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AFirstPersonPlayer::PauseGame);
 	}
-
 }
 
-
-void AFirstPersonPlayer::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-
-}
-
+/*
+* function: drops currently equipped item and spawns it in the world
+*/
 void AFirstPersonPlayer::DropEquippedItem(APickable* ToPickUp)
 {
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AFirstPersonController* FPC = Cast<AFirstPersonController>(APC); //get player controller
-	//FPC->DestroyDisplayWidget();
 	if (ItemEquipped && EquippedItem && EquippedItemActor && ToPickUp)
 	{
-
 		UE_LOG(LogTemp, Log, TEXT("Can Set Down Item"));
+
 		// Get temp pickable transform
 		FVector SpawnLocation = ToPickUp->GetActorLocation();
 		FRotator SpawnRotation = ToPickUp->GetActorRotation();
 		UE_LOG(LogTemp, Log, TEXT("TempPickable Location: %s. TempPickable Rotation: %s"), *SpawnLocation.ToString(), *SpawnRotation.ToString());
 
-		//Call pickup function (on TempPickable)
+		//save item to set down and destroy the item to pick up
 		ItemToSetDown = EquippedItemActor;
-		
 		ToPickUp->Destroy();
 
-
-		// Drop what we're currently holding
+		//drop what player is currently holding
 		TSubclassOf<APickable> ClassToSpawn = EquippedItemActor->GetClass();
 		UE_LOG(LogTemp, Log, TEXT("ClassToSpawn: %s"), *EquippedItemActor->GetName());
 		if (ClassToSpawn)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Class to spawn PASSED"));
+			UE_LOG(LogTemp, Log, TEXT("Class to spawn passed"));
+			//spawn item at specified location and rotation
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
 			APickable* DroppedItem = GetWorld()->SpawnActor<APickable>(ClassToSpawn, SpawnLocation, SpawnRotation, SpawnParams);
 			if (DroppedItem)
 			{
+				//adjust dropped item mesh and tags
 				UStaticMeshComponent* MeshComp = Cast<UStaticMeshComponent>(DroppedItem->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 				DroppedItem->Tags.Add("PickUp");
 				DroppedItem->TransferActorTags(EquippedItemActorTags, DroppedItem);
-				//remove from inventory
-				//get FPC 
-				APlayerController* APlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-				AFirstPersonController* FPersonController = Cast<AFirstPersonController>(APlayerController); //get player controller
-				FPersonController->CheckInventory(EquippedItemActor, false);
-
 				
+				//remove old item from inventry
+				FPC->CheckInventory(EquippedItemActor, false);
+				
+				//adjust static mesh component of currently equipped item
 				if (MeshComp && EquippedItem)
 				{
 					UStaticMesh* DroppedMesh = EquippedItem->GetStaticMesh();
 					MeshComp->SetStaticMesh(DroppedMesh);
+					UE_LOG(LogTemp, Log, TEXT("Dropped item: %s"), *DroppedItem->GetName());
 				}
-
 			}
-			DrawDebugSphere(GetWorld(), SpawnLocation, 10.0f, 12, FColor::Red, false, 5.0f);
-			UE_LOG(LogTemp, Log, TEXT("Dropped item: %s"), *DroppedItem->GetName());
 		}
 		if (PutDownSoundEffect)
 		{
@@ -380,30 +333,35 @@ void AFirstPersonPlayer::DropEquippedItem(APickable* ToPickUp)
 	}
 }
 
+/*
+* function: equips item that is passed in function
+*/
 void AFirstPersonPlayer::EquipItem(APickable* CurrentPickable, AFirstPersonController* AFPC)
 {
-	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AFirstPersonController* FPC = Cast<AFirstPersonController>(APC); //get player controller
 	AFPC->DestroyDisplayWidget();
-
 	if (PickUpSoundEffect)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, PickUpSoundEffect, GetActorLocation());
 	}
+	if (CurrentPickable)
+	{
+		//set equipped item actor
+		UE_LOG(LogTemp, Warning, TEXT("Pickable is: %s"), *CurrentPickable->GetName());
+		EquippedItemActor = CurrentPickable;
+		EquippedItemActorTags = CurrentPickable->GetPickableTags(CurrentPickable); //set currently equipped item tags
+		CurrentPickable->PickUp();
+		ItemEquipped = true;
 
-	//get mesh of aactor and set it to mesh of equipped item
-	EquippedItemActor = CurrentPickable;
-	EquippedItemActorTags = CurrentPickable->GetPickableTags(CurrentPickable);
-	CurrentPickable->PickUp();
-	FString Message = FString::Printf(TEXT("Pickable is: %s"), *CurrentPickable->GetName());
-	UKismetSystemLibrary::PrintString(this, Message, true, true, FColor::Red, 5.0f);
-	ItemEquipped = true;
+		//set equipped item mesh
+		UStaticMeshComponent* PickableMeshComp = Cast<UStaticMeshComponent>(CurrentPickable->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		UStaticMesh* PickableMesh = PickableMeshComp->GetStaticMesh();
+		EquippedItem->SetStaticMesh(PickableMesh);
+		UE_LOG(LogTemp, Display, TEXT("EquippedItem mesh: %s"), *EquippedItem->GetStaticMesh()->GetName());
+		UE_LOG(LogTemp, Display, TEXT("EquippedItemActor mesh: %s"), *EquippedItemActor->GetName());
 
-	UStaticMeshComponent* PickableMeshComp = Cast<UStaticMeshComponent>(CurrentPickable->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	UStaticMesh* PickableMesh = PickableMeshComp->GetStaticMesh();
-	EquippedItem->SetStaticMesh(PickableMesh);
-	UE_LOG(LogTemp, Display, TEXT("EquippedItem: %s"), *EquippedItem->GetStaticMesh()->GetName());
-	AFPC->CheckInventory(CurrentPickable, true);
+		//update inventory
+		AFPC->CheckInventory(CurrentPickable, true);
+	}
 }
 
 

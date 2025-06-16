@@ -92,7 +92,7 @@ Function:
 	-Marks the item as searched
 	-sets equipped item as hidden item (meshes)
 */
-void ASearchable::SearchItem(UStaticMeshComponent* CurrentEquippedItem, bool& HasItemEquipped)
+void ASearchable::SearchItem()
 {
 	//indicate that this actor has been searched
 	if (PickUpWidget)

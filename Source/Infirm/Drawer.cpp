@@ -26,7 +26,7 @@ void ADrawer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//set up components
+	//bind events
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADrawer::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ADrawer::OverlapEnd);
 	
@@ -64,7 +64,7 @@ void ADrawer::Tick(float DeltaTime)
 }
 
 /*
-function: function called by other actors to open the drawer
+* function: function called by other actors to open the drawer
 */
 void ADrawer::OpenDrawer(ADrawer* CurrentDrawer)
 {
@@ -92,7 +92,7 @@ void ADrawer::OpenDrawer(ADrawer* CurrentDrawer)
 }
 
 /*
-function: destroys active widgets related to Drawer
+* function: destroys active widgets related to Drawer
 */
 void ADrawer::DestroyAllWidgets()
 {

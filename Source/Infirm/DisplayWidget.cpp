@@ -6,7 +6,7 @@
 #include "Components/Button.h"
 
 /*
-function: display interaction text on the screen based on the integer value passed in
+* function: display interaction text on the screen based on the integer value passed in
 */
 void UDisplayWidget::SetText(int textVal)
 {

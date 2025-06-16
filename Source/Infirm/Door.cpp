@@ -31,8 +31,8 @@ void ADoor::BeginPlay()
 	//set actor rotation upon spawn
 	OriginalRotation = this->GetActorRotation();
 
-	//set actor attributes
-	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADoor::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
+	//bind events
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADoor::OverlapBegin); 
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ADoor::OverlapEnd);
 
 	//get FPP and FPC
@@ -62,7 +62,7 @@ void ADoor::Tick(float DeltaTime)
 }
 
 /*
-function: function called by other actors to open the door
+* function: function called by other actors to open the door
 */
 void ADoor::OpenDoor()
 {
@@ -85,7 +85,7 @@ void ADoor::OpenDoor()
 }
 
 /*
-function: destroys active widgets related to Door
+* function: destroys active widgets related to Door
 */
 void ADoor::DestroyAllWidgets()
 {
