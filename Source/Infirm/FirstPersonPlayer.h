@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Pickable.h"
+#include "PickableData.h"
 #include "FirstPersonPlayer.generated.h"
 
 class UInputMappingContext;
@@ -26,10 +27,14 @@ public:
 
 	void RemoveEquippedItem();
 	void RemoveEquippedItemActor();
-
 	TArray<FName> GetEquippedItemActorTags();
 
 	APickable* GetEquippedItemActor();
+	UFUNCTION(BlueprintCallable)
+	FPickableData GetEquippedItemData() const { return EquippedItemData; }
+	UFUNCTION()
+	void ClearEquippedItemData();
+
 
 	void SetGamePaused(bool NewGamePaused);
 
@@ -88,6 +93,8 @@ private:
 	TArray<FName> EquippedItemActorTags;
 	UFUNCTION()
 	void EquipItem(APickable* TempPickable, AFirstPersonController* FPC);
+	UPROPERTY()
+	FPickableData EquippedItemData;
 
 
 	//----------------------------------SOUND EFFECTS--------------------------------------------

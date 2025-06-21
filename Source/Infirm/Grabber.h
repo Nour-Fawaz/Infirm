@@ -26,24 +26,25 @@ public:
 	void GrabItem();
 	
 private:
-	//components
+	//----------------------------------COMPONENTS-------------------------------------------
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Box Component", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComp;
 	UPROPERTY(BlueprintReadOnly, EditInstanceOnly, Category = "Meshes", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
 
-	//Player
+	//----------------------------------PLAYER-------------------------------------------
 	UPROPERTY()
 	class AFirstPersonPlayer* FPP;
 	UPROPERTY()
 	class AFirstPersonController* FPC;
 
-	//Items to grab
+	//----------------------------------ITEMS-------------------------------------------
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Items To Grab", meta = (AllowPrivateAccess = "true"))
 	TArray<FName> ItemsToGrab;
 	UPROPERTY()
 	TArray<UStaticMeshComponent*> SpawnedMeshes;
-	// List of available sockets to spawn at
+	
+	//----------------------------------SOCKETS-------------------------------------------
 	UPROPERTY(EditAnywhere)
 	TArray<FName> ItemSpawnSockets;
 	int32 CurrentSocketIndex = 0;
@@ -55,7 +56,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items To Grab", meta = (AllowPrivateAccess = "true"))
 	UStaticMesh* MeshToSpawn;
 
-	//events
+	//----------------------------------EVENTS-------------------------------------------
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()

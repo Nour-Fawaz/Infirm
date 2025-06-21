@@ -83,6 +83,7 @@ void ADrawer::OpenDrawer(ADrawer* CurrentDrawer)
 		{
 			FPC->RemoveFromInventory(Passkey); //if player uses key remove from inventory
 			FPP->RemoveEquippedItem(); //remove item from player's hand
+			FPP->RemoveEquippedItemActor();//////////////////////////////////////////////////////////////////////////////////////////////
 		}
 	}
 	else if (bLocked) //if actor does not have key tell FPC to display text 

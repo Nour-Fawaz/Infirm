@@ -531,3 +531,45 @@ bool AFirstPersonController::InInventory(FName ItemToCheck)
 
 	return false;
 }
+
+void AFirstPersonController::CheckInventoryByTag(TArray<FName> ItemTags, bool HaveItem)
+{
+	for (FName& ItemTag : ItemTags)
+	{
+		if (ItemTag == "Candle")
+		{
+			HaveCandle = HaveItem;
+			UE_LOG(LogTemp, Display, TEXT("Candle bool status: %d"), HaveCandle);
+		}
+		else if (ItemTag == "Possession")
+		{
+			HavePossession = HaveItem;
+			UE_LOG(LogTemp, Display, TEXT("Possession bool status: %d"), HavePossession);
+		}
+		else if (ItemTag == "Incantation")
+		{
+			HaveIncantation = HaveItem;
+			UE_LOG(LogTemp, Display, TEXT("Incantation bool status: %d"), HaveIncantation);
+		}
+		else if (ItemTag == "Salt")
+		{
+			HaveSalt = HaveItem;
+			UE_LOG(LogTemp, Display, TEXT("Salt bool status: %d"), HaveSalt);
+		}
+		else if (ItemTag == "KitchenKey")
+		{
+			if (HaveItem)
+			{
+				FPP->Tags.Add(FName("KitchenKey"));
+			}
+			else
+			{
+				FPP->Tags.Remove(FName("KitchenKey"));
+			}
+
+			HaveKitchenKey = HaveItem;
+			UE_LOG(LogTemp, Display, TEXT("KitchenKey bool status: %d"), HaveKitchenKey);
+
+		}
+	}
+}

@@ -22,6 +22,7 @@ private:
 	virtual void NativeConstruct() override;
 
 	class AFirstPersonController* FPC;
+
 	UFUNCTION()
 	void BackButtonOnClicked();
 };

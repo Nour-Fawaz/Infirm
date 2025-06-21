@@ -65,6 +65,8 @@ public:
 	void RemoveFromInventory(const FName ItemToRemove);
 	UFUNCTION()
 	bool InInventory(FName ItemToCheck);
+	UFUNCTION()
+	void CheckInventoryByTag(TArray<FName>ItemTags, bool HaveItem);
 	
 private:
 
