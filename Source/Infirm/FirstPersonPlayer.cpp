@@ -17,7 +17,6 @@
 #include "Chaos/DebugDrawQueue.h"
 #include "UObject/Class.h"
 #include "SafeDoor.h"
-#include "TriggerComponent.h"
 #include "Drawer.h"
 #include "Grabber.h"
 
