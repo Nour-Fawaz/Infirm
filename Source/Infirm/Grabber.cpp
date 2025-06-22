@@ -41,8 +41,13 @@ void AGrabber::BeginPlay()
 		FPP = Cast<AFirstPersonPlayer>(APC->GetPawn());
 
 	}
-	//socketes
-	ItemSpawnSockets = { "ItemSocketSpawn1", "ItemSocketSpawn2", "ItemSocketSpawn3", "ItemSocketSpawn4" };
+
+	// get socketes
+	UStaticMeshComponent* GrabberMesh = GetComponentByClass<UStaticMeshComponent>();
+	if (GrabberMesh)
+	{
+		ItemSpawnSockets = GrabberMesh->GetAllSocketNames();
+	}
 }
 
 // Called every frame
@@ -81,13 +86,13 @@ void AGrabber::GrabItem()
 					FName SocketName = ItemSpawnSockets[CurrentSocketIndex];
 					ItemSocketMap.Add(SocketName, FPPTag);
 
-					if (!EquippedData.Mesh)
+					if (!EquippedData.Mesh) // check mesh of equipped item
 					{
 						UE_LOG(LogTemp, Warning, TEXT("Mesh in EquippedData is null!"));
 						return;
 					}
 
-					if (!StaticMesh->DoesSocketExist(SocketName))
+					if (!StaticMesh->DoesSocketExist(SocketName)) // check socket
 					{
 						UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist!"), *SocketName.ToString());
 						return;
@@ -96,16 +101,16 @@ void AGrabber::GrabItem()
 					FVector SpawnLoc = StaticMesh->GetSocketLocation(SocketName);
 					FRotator SpawnRot = StaticMesh->GetSocketRotation(SocketName);
 
-					UStaticMeshComponent* SpawnMesh = NewObject<UStaticMeshComponent>(this);
+					UStaticMeshComponent* SpawnMesh = NewObject<UStaticMeshComponent>(this, FPPTag, RF_NoFlags);
 					if (SpawnMesh)
 					{
-						FPP->ClearEquippedItemData(); // You should implement this to reset the struct
-						FPC->RemoveFromInventory(FPPTag);
+						FPP->ClearEquippedItemData(); // clears data for currently equipped item
 
-						SpawnMesh->RegisterComponent();
+						SpawnMesh->RegisterComponent(); // set mesh to appear in world
 						SpawnMesh->SetStaticMesh(EquippedData.Mesh);
 						SpawnMesh->AttachToComponent(StaticMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
 
+						// adjust actor spawn settings
 						SpawnMesh->SetWorldLocation(SpawnLoc);
 						SpawnMesh->SetWorldRotation(SpawnRot);
 						SpawnMesh->SetVisibility(true);
@@ -114,7 +119,7 @@ void AGrabber::GrabItem()
 						SpawnMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 						SpawnMesh->SetSimulatePhysics(false);
 
-						//remove equipped item
+						// remove equipped item
 						FPC->RemoveFromInventory(FPPTag);
 						FPP->RemoveEquippedItem();
 						FPP->RemoveEquippedItemActor();
@@ -127,92 +132,17 @@ void AGrabber::GrabItem()
 				}
 				else
 				{
-					UE_LOG(LogTemp, Warning, TEXT("No more available sockets to spawn items!"));
+					UE_LOG(LogTemp, Warning, TEXT("No more available sockets"));
 				}
 			}
 
-			if (CurrentSocketIndex == 4)
+			if (CurrentSocketIndex == ItemSpawnSockets.Num()) // check if player filled sockets available
 			{
 				UE_LOG(LogTemp, Warning, TEXT("GAME ENDED"));
 				UGameplayStatics::OpenLevel(this, FName("EndGame"));
 			}
 		}
 	}
-	//if (FPP && FPC)
-	//{
-	//	TArray<FName> FPPTags = FPP->GetEquippedItemActorTags();
-	//	for (FName FPPTag : FPPTags)
-	//	{
-	//		UE_LOG(LogTemp, Display, TEXT("is the FPPTag: %s in Items to grab: %d, does the socket map contain it: %d"), *FPPTag.ToString(), ItemsToGrab.Contains(FPPTag), ItemSocketMap.Contains(FPPTag));
-	//		if (ItemsToGrab.Contains(FPPTag) && !ItemSocketMap.Contains(FPPTag) && FPC->InInventory(FPPTag))
-	//		{
-	//			APickable* PickableToSpawn = FPP->GetEquippedItemActor();
-
-	//			//if PickableToSpawn is valid and we have a socket available
-	//			if (!PickableToSpawn)
-	//			{
-	//				UE_LOG(LogTemp, Warning, TEXT("No pickable item to spawn!"));
-	//				return;
-	//			}
-	//			UE_LOG(LogTemp, Display, TEXT("Current Socket Index: %d"), CurrentSocketIndex);
-
-	//			if (PickableToSpawn && CurrentSocketIndex < ItemSpawnSockets.Num()) // if PickableToSpawn is valid and there are enough sockets
-	//			{
-	//				ItemSocketMap.Add(ItemSpawnSockets[CurrentSocketIndex], FPPTag); //map tag to socket
-	//				
-	//				//get mesh of PickableToSpawn
-	//				UStaticMeshComponent* SourceMeshComp = Cast<UStaticMeshComponent>(PickableToSpawn->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	//				if (!SourceMeshComp) return;
-	//			    MeshToSpawn = SourceMeshComp->GetStaticMesh();
-	//				if (!MeshToSpawn) return;
-
-	//				FName SocketName = ItemSpawnSockets[CurrentSocketIndex]; //get socket name
-	//				if (!StaticMesh->DoesSocketExist(SocketName)) //check if socket exists
-	//				{
-	//					UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist!"), *SocketName.ToString());
-	//					return;
-	//				}
-
-	//				//spawn
-	//				FVector SpawnLoc = StaticMesh->GetSocketLocation(SocketName);
-	//				FRotator SpawnRot = StaticMesh->GetSocketRotation(SocketName);
-	//				UStaticMeshComponent* SpawnMesh = NewObject<UStaticMeshComponent>(this);
-	//				if (SpawnMesh)
-	//					{
-	//					    FPP->RemoveEquippedItem();
-	//					    FPC->RemoveFromInventory(FPPTag);
-	//						SpawnMesh->RegisterComponent();
-	//						SpawnMesh->SetStaticMesh(MeshToSpawn);
-	//					    SpawnMesh->AttachToComponent(StaticMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-	//						UE_LOG(LogTemp, Display, TEXT("Socket %s spawned with item: %s"), *SocketName.ToString(), *FPPTag.ToString());
-	//						//setup spawn mesh properties
-	//						SpawnMesh->SetWorldLocation(SpawnLoc);
-	//						SpawnMesh->SetWorldRotation(SpawnRot);
-	//						SpawnMesh->SetVisibility(true);
-	//						SpawnMesh->SetHiddenInGame(false);
-	//						SpawnMesh->SetRelativeScale3D(FVector(1.0f));
-	//						SpawnMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//						SpawnMesh->SetSimulatePhysics(false);
-
-	//						// Store reference to prevent garbage collection
-	//						SpawnedMeshes.Add(SpawnMesh);
-
-	//						CurrentSocketIndex++;
-	//						FPP->RemoveEquippedItemActor();
-	//				}
-	//			}
-	//			else
-	//			{
-	//				UE_LOG(LogTemp, Warning, TEXT("No more available sockets to spawn items!"));
-	//			}
-	//		}
-	//		if (CurrentSocketIndex == 4) //player collected all items, game ended
-	//		{
-	//			UE_LOG(LogTemp, Warning, TEXT("GAME ENDED"));
-	//			UGameplayStatics::OpenLevel(this, FName("EndGame"));
-	//		}
-	//	}
-	//}
 }
 
 void AGrabber::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -221,7 +151,7 @@ void AGrabber::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	{
 		if (AFirstPersonPlayer* FirstPersonPlayer = Cast<AFirstPersonPlayer>(OtherActor))
 		{
-			FPC->DisplayWidgetTextByInt(7);
+			FPC->DisplayWidgetTextByInt(7); // display set down prompt to player
 		}
 	}
 }
