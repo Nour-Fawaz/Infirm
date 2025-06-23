@@ -13,41 +13,42 @@ class INFIRM_API ASafeDoor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ASafeDoor();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	//----------------------------------WIDGETS--------------------------------------------
 	void DisplaySafePanel(ASafeDoor* CurrentSafeDoor);
+	void DestroyAllWidgets();
+
+	//----------------------------------GET ATTRIBUTES--------------------------------------------
 	void SetIsOpen(bool NewOpenStatus);
 	bool GetIsOpen();
 	FString GetSafeCode();
-	void DestroyAllWidgets();
-
+	
+	//----------------------------------PUBLIC ACTIONS--------------------------------------------
 	UFUNCTION()
 	void OpenSafeDoor();
 
 
 private:
-
-	//components
+	//----------------------------------COMPONENTS--------------------------------------------
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Box Component", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComp;
 
-	//Player
+	//----------------------------------PLAYER--------------------------------------------
 	UPROPERTY()
 	AFirstPersonPlayer* FPP;
 	UPROPERTY()
 	class AFirstPersonController* FPC;
 
-	//widgets
+	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class USafeDoorWidget> SafeDoorWidgetClass;
 	UPROPERTY()
@@ -56,11 +57,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Safe Door", meta = (AllowPrivateAccess = "true"))
 	bool isOpen;
 
-	//attributes
+	//----------------------------------ATTRIBUTES--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Safe Door Code", meta = (AllowPrivateAccess = "true"))
 	FString Code;
 
-	//movement
+	//----------------------------------MOVEMENTS--------------------------------------------
 	FRotator OriginalRotation;
 	FRotator TargetRotation;
 	UPROPERTY(EditAnywhere, Category = "Rotation")
@@ -69,12 +70,9 @@ private:
 	double RotationSpeed = 0;
 	bool Opening = false;
 	
-
-	//events
+	//----------------------------------EVENTS--------------------------------------------
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-
 };

@@ -10,9 +10,7 @@
 // Sets default values
 ADrawer::ADrawer()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	//set up components
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -36,7 +34,6 @@ void ADrawer::BeginPlay()
 	if (APC)
 	{
 		FPP = Cast<AFirstPersonPlayer>(APC->GetPawn());
-
 	}
 
 	//set up movement
@@ -51,11 +48,9 @@ void ADrawer::Tick(float DeltaTime)
 
 	if (Opening)
 	{
-		
-		TargetLocation = OriginalLocation + MoveOffset; //otherwise update the target location to be wanted target location
-
+		TargetLocation = OriginalLocation + MoveOffset;
 		FVector CurrentLocation = GetActorLocation();
-		float Speed = MoveOffset.Length() / MoveTime; // diff between target and original location is move lcoation
+		float Speed = MoveOffset.Length() / MoveTime;
 
 		FVector NewLocation = FMath::VInterpConstantTo(CurrentLocation, TargetLocation, DeltaTime, Speed);
 		SetActorLocation(NewLocation);
@@ -64,11 +59,11 @@ void ADrawer::Tick(float DeltaTime)
 }
 
 /*
-* function: function called by other actors to open the drawer
+* function: called by player to open drawer
 */
 void ADrawer::OpenDrawer(ADrawer* CurrentDrawer)
 {
-	//player has garage key then unlock the drawer and open
+	//player has key then unlock the drawer and open
 	if (!bLocked)
 	{
 		Opening = true;
@@ -83,10 +78,10 @@ void ADrawer::OpenDrawer(ADrawer* CurrentDrawer)
 		{
 			FPC->RemoveFromInventory(Passkey); //if player uses key remove from inventory
 			FPP->RemoveEquippedItem(); //remove item from player's hand
-			FPP->RemoveEquippedItemActor();//////////////////////////////////////////////////////////////////////////////////////////////
+			FPP->RemoveEquippedItemActor();
 		}
 	}
-	else if (bLocked) //if actor does not have key tell FPC to display text 
+	else if (bLocked) //if actor does not have key tell FPC to display gameplay text 
 	{
 		FPC->DisplayerPlayerTextWidget("KitchenDrawer");
 	}
@@ -99,7 +94,7 @@ void ADrawer::DestroyAllWidgets()
 {
 	if (LockedDrawerWidget)
 	{
-		LockedDrawerWidget->RemoveFromParent(); //remove widget from player viewport
+		LockedDrawerWidget->RemoveFromParent();
 		LockedDrawerWidget = nullptr;
 	}
 }

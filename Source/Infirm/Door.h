@@ -43,7 +43,6 @@ private:
 	UPROPERTY()
 	class AFirstPersonController* FPC;
 
-
 	//----------------------------------ATTRIBUTES--------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "Attributes")
 	bool bLocked = false;
@@ -71,7 +70,6 @@ private:
 	//----------------------------------SOUND EFFECTS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* OpenDoorSoundEffect;
-	
 	
 	//----------------------------------EVENTS--------------------------------------------
 	UFUNCTION()

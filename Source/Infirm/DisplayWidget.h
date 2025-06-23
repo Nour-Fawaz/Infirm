@@ -6,9 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "DisplayWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INFIRM_API UDisplayWidget : public UUserWidget
 {

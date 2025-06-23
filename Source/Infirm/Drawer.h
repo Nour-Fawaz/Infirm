@@ -28,7 +28,6 @@ public:
 	void OpenDrawer(ADrawer* CurrentDrawer);
 
 private:
-
 	//----------------------------------COMPONENTS--------------------------------------------
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Box Component", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComp;

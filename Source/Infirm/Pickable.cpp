@@ -26,7 +26,7 @@ void APickable::PickUp()
 {
 	DestroyAllWidgets();
 	this->Destroy();
-	UKismetSystemLibrary::PrintString(this, TEXT("Picked up"), true, true, FColor::Cyan, 5.0f);
+	UE_LOG(LogTemp, Display, TEXT("Picked up"));
 }
 
 //FName APickable::GetLocationTag(APickable* CurrentPickable)

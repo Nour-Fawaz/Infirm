@@ -18,7 +18,6 @@ public:
     //----------------------------------PUBLIC ACTIONS--------------------------------------------
     UFUNCTION(BlueprintCallable)
     void PlayFadeIn();
-
     UFUNCTION(BlueprintCallable)
     void PlayFadeOut();
 
@@ -37,8 +36,6 @@ private:
     //----------------------------------EFFECTS--------------------------------------------
     UPROPERTY(meta = (BindWidgetAnim), Transient)
     UWidgetAnimation* FadeIn;
-
     UPROPERTY(meta = (BindWidgetAnim), Transient)
     UWidgetAnimation* FadeOut;
-	
 };

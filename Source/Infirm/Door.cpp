@@ -14,7 +14,6 @@
 // Sets default values
 ADoor::ADoor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -56,13 +55,11 @@ void ADoor::Tick(float DeltaTime)
 		TargetRotation = OriginalRotation + RotationOffset;
 		FRotator NewRotation = FMath::RInterpConstantTo(GetActorRotation(), TargetRotation, DeltaTime, RotationSpeed);
 		SetActorRotation(NewRotation);
-
 	}
-
 }
 
 /*
-* function: function called by other actors to open the door
+* function: called by player to open door
 */
 void ADoor::OpenDoor()
 {
@@ -123,9 +120,7 @@ void ADoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Other
 				LockedDoorWidget->SetText(2);
 			}
 			LockedDoorWidget->AddToPlayerScreen();
-
 		}
-
 	}
 }
 
@@ -133,8 +128,3 @@ void ADoor::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 {
 	DestroyAllWidgets();
 }
-
-
-
-
-

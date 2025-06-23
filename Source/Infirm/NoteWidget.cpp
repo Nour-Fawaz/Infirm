@@ -15,9 +15,8 @@
 #include "Pickable.h"
 
 
-
 /*
-function: retreives text files for current pickable
+function: sets text for current pickable
 */
 void UNoteWidget::SetText(APickable* CurrentPickable)
 {
@@ -66,7 +65,6 @@ void UNoteWidget::SetText(APickable* CurrentPickable)
 			"With a heart turned ever toward thee,\n"
 			"Jonah"
 		)));
-
 	}
 }
 
@@ -99,7 +97,7 @@ void UNoteWidget::NativeConstruct()
 
 void UNoteWidget::ActionButtonOnClicked()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("CLICKED BUTTON"), true, true, FColor::Cyan, 5.0f);
+	UE_LOG(LogTemp, Display, TEXT("Closed Note Widget"));
 
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	FPC = Cast<AFirstPersonController>(APC); //get player controller

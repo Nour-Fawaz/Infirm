@@ -8,9 +8,6 @@
 #include "FirstPersonPlayer.h"
 #include "FirstPersonController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INFIRM_API AFirstPersonController : public APlayerController
 {
@@ -41,6 +38,7 @@ public:
 	void ClosePickUpWidget();
 	UPROPERTY()
     class APickable* FocusedPickable;
+
 	UFUNCTION()
 	void DisplayWidgetTextByInt(int textVal);
 	UFUNCTION()
@@ -69,7 +67,6 @@ public:
 	void CheckInventoryByTag(TArray<FName>ItemTags, bool HaveItem);
 	
 private:
-
 	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UNoteWidget> NoteWidgetClass;
@@ -120,5 +117,4 @@ private:
 	//----------------------------------PLAYER--------------------------------------------
 	UPROPERTY()
 	AFirstPersonPlayer* FPP;
-	
 };

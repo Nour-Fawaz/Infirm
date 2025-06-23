@@ -3,10 +3,8 @@
 
 #include "HowToPlayWidget.h"
 #include "Components/Button.h"
-//#include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "FirstPersonController.h"
-//#include "Components/Widget.h"
 
 void UHowToPlayWidget::NativeConstruct()
 {

@@ -25,6 +25,7 @@ public:
 	//holdingSomething
 	bool ItemEquipped = false;
 
+	//----------------------------------INVENTORY--------------------------------------------
 	void RemoveEquippedItem();
 	void RemoveEquippedItemActor();
 	TArray<FName> GetEquippedItemActorTags();
@@ -35,7 +36,7 @@ public:
 	UFUNCTION()
 	void ClearEquippedItemData();
 
-
+	//----------------------------------WIDGETS--------------------------------------------
 	void SetGamePaused(bool NewGamePaused);
 
 protected:
@@ -79,11 +80,7 @@ private:
 	APickable* EquippedItemActor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* SkeletalMesh;
-	//----------------------------------------------------------------------------------------
 	
-
-
-
 	//----------------------------------EVENTS--------------------------------------------
 	UFUNCTION()
 	void DropEquippedItem(APickable* ToPickUp);
@@ -96,11 +93,9 @@ private:
 	UPROPERTY()
 	FPickableData EquippedItemData;
 
-
 	//----------------------------------SOUND EFFECTS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* PickUpSoundEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* PutDownSoundEffect;
-
 };

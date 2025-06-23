@@ -6,15 +6,14 @@
 #include "Blueprint/UserWidget.h"
 #include "PauseWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API UPauseWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 protected:
+	//----------------------------------BUTTONS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ResumeButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -25,12 +24,14 @@ protected:
 private:
 	virtual void NativeConstruct() override;
 
+	//----------------------------------PLAYER--------------------------------------------
 	class AFirstPersonController* FPC;
+
+	//----------------------------------BUTTON EVENTS--------------------------------------------
 	UFUNCTION()
 	void ResumeButtonOnClicked();
 	UFUNCTION()
 	void MainMenuButtonOnClicked();
 	UFUNCTION()
 	void ExitButtonOnClicked();
-	
 };

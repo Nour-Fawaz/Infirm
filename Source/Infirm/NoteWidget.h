@@ -20,8 +20,7 @@ public:
 	void SetText(class APickable* CurrentPickable);
 
 protected:
-
-
+	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ActionButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -33,12 +32,12 @@ private:
 	UFUNCTION()
 	void ActionButtonOnClicked();
 
+	//----------------------------------PLAYER--------------------------------------------
 	class AFirstPersonController* FPC;
 
-	//sound effects
+	//----------------------------------AUDIO--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* NoteSoundEffect;
 	UPROPERTY()
 	class UAudioComponent* MusicAudioComponent;
-	
 };

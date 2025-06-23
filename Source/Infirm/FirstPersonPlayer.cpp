@@ -6,25 +6,21 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/GameplayStatics.h"
-#include "DrawDebugHelpers.h" 
+#include "Kismet/GameplayStatics.h" 
 #include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "FirstPersonController.h"
 #include "Door.h"
 #include "Searchable.h"
-#include "Chaos/DebugDrawQueue.h"
 #include "UObject/Class.h"
 #include "SafeDoor.h"
-#include "TriggerComponent.h"
 #include "Drawer.h"
 #include "Grabber.h"
 
 // Sets default values
 AFirstPersonPlayer::AFirstPersonPlayer()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//components
@@ -35,8 +31,6 @@ AFirstPersonPlayer::AFirstPersonPlayer()
 	CameraComp->bUsePawnControlRotation = true; //allow camera to rotate with pawn
 	SkeletalMesh = GetMesh();
 	EquippedItem = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Equipped Item"));
-
-
 }
 
 /* 
@@ -130,7 +124,6 @@ void AFirstPersonPlayer::Move(const FInputActionValue& Value)
 		AddMovementInput(GetActorRightVector(), MoveVector.X);
 		AddMovementInput(GetActorForwardVector(), MoveVector.Y);
 	}
-	
 }
 
 void AFirstPersonPlayer::Look(const FInputActionValue& Value)
@@ -164,7 +157,6 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 
 			if (CurrentActor->ActorHasTag("PickUp"))
 			{
-				//UKismetSystemLibrary::PrintString(this, TEXT("This is a pickable"), true, true, FColor::Cyan, 5.0f);
 				APickable* TempPickable = Cast<APickable>(CurrentActor);
 				UE_LOG(LogTemp, Display, TEXT("this actor is a pickable"));
 
@@ -178,7 +170,6 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 				}
 				else if (ItemEquipped && FPC)
 				{
-					
 					//drop equipped item
 					FPC->DestroyAllWidgets();
 					FPC->DestroyDisplayWidget();
@@ -202,13 +193,11 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 			{
 				ADoor* TempDoor = Cast<ADoor>(CurrentActor);
 				TempDoor->OpenDoor();
-				
 			}
 			else if (CurrentActor->ActorHasTag("SafeDoor"))
 			{
 				ASafeDoor* TempSafe = Cast<ASafeDoor>(CurrentActor);
 				TempSafe->DisplaySafePanel(TempSafe);
-				
 			}
 			else if (CurrentActor->ActorHasTag("Drawer"))
 			{
@@ -224,16 +213,10 @@ void AFirstPersonPlayer::PickUpItem(const FInputActionValue& Value)
 			{
 				if (APickable* TempPickable = Cast<APickable>(CurrentActor))
 				{
-					//clear all possible widgets
-					//TempPickable->DestroyAllWidgets();
 					FPC->DestroyDisplayWidget();
 					UE_LOG(LogTemp, Warning, TEXT("This note is: %s"), *CurrentActor->GetName());
 					FPC->ReadNoteWidget(TempPickable);
 				}
-				/*else if (ASearchable* TempSearchable = Cast<ASearchable>(CurrentActor))
-				{
-					TempSearchable->DestroyAllWidgets();
-				}*/
 			}	
 		}
 	}
@@ -293,14 +276,10 @@ void AFirstPersonPlayer::DropEquippedItem(APickable* ToPickUp)
 		FRotator SpawnRotation = ToPickUp->GetActorRotation();
 		UE_LOG(LogTemp, Log, TEXT("TempPickable Location: %s. TempPickable Rotation: %s"), *SpawnLocation.ToString(), *SpawnRotation.ToString());
 
-		//save item to set down and destroy the item to pick up
-		//ItemToSetDown = EquippedItemActor;
 		ToPickUp->Destroy();
 
 		//drop what player is currently holding
-		//TSubclassOf<APickable> ClassToSpawn = EquippedItemActor->GetClass();
 		TSubclassOf<APickable> ClassToSpawn = EquippedItemData.PickableClass;
-		//UE_LOG(LogTemp, Log, TEXT("ClassToSpawn: %s"), *EquippedItemActor->GetName());
 		if (ClassToSpawn)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Class to spawn passed"));
@@ -318,30 +297,13 @@ void AFirstPersonPlayer::DropEquippedItem(APickable* ToPickUp)
 				}
 				else
 				{
-					UE_LOG(LogTemp, Error, TEXT("Dropped item has no mesh component!"));	
+					UE_LOG(LogTemp, Error, TEXT("DroppedItem has no mesh component"));	
 				}
 				DroppedItem->Tags = EquippedItemData.Tags; //set tags of dropped item to currently equipped item tags
 
 				//remove old item from inventry
 				FPC->CheckInventoryByTag(EquippedItemData.Tags, false); //remove item from inventory by tags
 				UE_LOG(LogTemp, Log, TEXT("Dropped item: %s"), *DroppedItem->GetName());
-				/*if (EquippedItemActor)
-				{
-					FPC->CheckInventory(EquippedItemActor, false);
-				}
-				else
-				{
-					UE_LOG(LogTemp, Display, TEXT("cant remove equipped item from inventory because EquippedItemActor is null (FPP-Drop)"));
-				}*/
-				
-				
-				//adjust static mesh component of currently equipped item
-				/*if (MeshComp && EquippedItem)
-				{
-					UStaticMesh* DroppedMesh = EquippedItem->GetStaticMesh();
-					MeshComp->SetStaticMesh(DroppedMesh);
-					UE_LOG(LogTemp, Log, TEXT("Dropped item: %s"), *DroppedItem->GetName());
-				}*/
 			}
 		}
 		if (PutDownSoundEffect)
@@ -366,7 +328,6 @@ void AFirstPersonPlayer::EquipItem(APickable* CurrentPickable, AFirstPersonContr
 		UE_LOG(LogTemp, Error, TEXT("Tried to equip a null pickable!"));
 		return;
 	}
-
 	if (PickUpSoundEffect)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, PickUpSoundEffect, GetActorLocation());
@@ -375,14 +336,13 @@ void AFirstPersonPlayer::EquipItem(APickable* CurrentPickable, AFirstPersonContr
 	{
 		//set equipped item actor
 		UE_LOG(LogTemp, Warning, TEXT("Before assignment: EquippedItemActor=%s"), EquippedItemActor ? *EquippedItemActor->GetName() : TEXT("nullptr"));
-		// Save data before destroying the actor
-		UStaticMeshComponent* PickableMeshComp1 = Cast<UStaticMeshComponent>(CurrentPickable->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-		UStaticMesh* PickableMesh1 = PickableMeshComp1 ? PickableMeshComp1->GetStaticMesh() : nullptr;
-
+		// Save data before picking up the pickable
+		UStaticMeshComponent* CurrentPickableMeshComp = Cast<UStaticMeshComponent>(CurrentPickable->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		UStaticMesh* CurrentPickableMesh = CurrentPickableMeshComp ? CurrentPickableMeshComp->GetStaticMesh() : nullptr;
 		EquippedItemData.PickableClass = CurrentPickable->GetClass();
-		EquippedItemData.Mesh = PickableMesh1;
-		EquippedItemData.Tags = CurrentPickable->Tags; // or use GetPickableTags()
-		EquippedItemData.DisplayName = CurrentPickable->GetName(); // or a custom field
+		EquippedItemData.Mesh = CurrentPickableMesh;
+		EquippedItemData.Tags = CurrentPickable->Tags; 
+		EquippedItemData.DisplayName = CurrentPickable->GetName(); 
 		EquippedItemActor = CurrentPickable;
 		UE_LOG(LogTemp, Warning, TEXT("After assignment: EquippedItemActor=%s"), EquippedItemActor ? *EquippedItemActor->GetName() : TEXT("nullptr"));
 		UE_LOG(LogTemp, Warning, TEXT("EquippedItemData: PickableClass=%s, Mesh=%s, Tags=%s, DisplayName=%s"),
@@ -391,27 +351,23 @@ void AFirstPersonPlayer::EquipItem(APickable* CurrentPickable, AFirstPersonContr
 			*FString::JoinBy(EquippedItemData.Tags, TEXT(", "), [](const FName& Tag) { return Tag.ToString(); }),
 			*EquippedItemData.DisplayName);
 		
-		EquippedItemActorTags = CurrentPickable->GetPickableTags(CurrentPickable); //set currently equipped item tags
 		CurrentPickable->PickUp();
 		ItemEquipped = true;
 
 		//set equipped item mesh
-		UStaticMeshComponent* PickableMeshComp = Cast<UStaticMeshComponent>(CurrentPickable->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-		if (!PickableMeshComp)
+		if (!CurrentPickableMeshComp)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Pickable has no mesh component!"));
 			return;
 		}
-		UStaticMesh* PickableMesh = PickableMeshComp->GetStaticMesh();
-		if (!PickableMesh)
+		if (!CurrentPickableMesh)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Pickable mesh component has no mesh!"));
 			return;
 		}
-		EquippedItem->SetStaticMesh(PickableMesh);
+		EquippedItem->SetStaticMesh(CurrentPickableMesh);
 		UE_LOG(LogTemp, Display, TEXT("EquippedItem mesh: %s"), *EquippedItem->GetStaticMesh()->GetName());
 		UE_LOG(LogTemp, Display, TEXT("EquippedItemActor mesh: %s"), *EquippedItemActor->GetName());
-		//CurrentPickable->PickUp();
 
 		//update inventory
 		AFPC->CheckInventory(CurrentPickable, true);
