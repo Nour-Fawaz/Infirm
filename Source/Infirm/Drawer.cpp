@@ -7,7 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "DisplayWidget.h"
 
-// Sets default values
+
 ADrawer::ADrawer()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -19,7 +19,6 @@ ADrawer::ADrawer()
 
 }
 
-// Called when the game starts or when spawned
 void ADrawer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -41,7 +40,6 @@ void ADrawer::BeginPlay()
 	TargetLocation = OriginalLocation;
 }
 
-// Called every frame
 void ADrawer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

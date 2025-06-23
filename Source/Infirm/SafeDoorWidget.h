@@ -13,10 +13,10 @@ class INFIRM_API USafeDoorWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	//----------------------------------PUBLIC ACTIONS--------------------------------------------
 	void SetSafeDoor(class ASafeDoor* NewSafeDoor);
 
 protected:
-
 	//----------------------------------BUTTONS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button0;

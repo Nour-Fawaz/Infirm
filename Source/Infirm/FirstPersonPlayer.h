@@ -13,23 +13,21 @@ class UInputMappingContext;
 class UInputAction;
 class UCameraComponent;
 
+
 UCLASS()
 class INFIRM_API AFirstPersonPlayer : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AFirstPersonPlayer();
-
-	//holdingSomething
-	bool ItemEquipped = false;
 
 	//----------------------------------INVENTORY--------------------------------------------
 	void RemoveEquippedItem();
 	void RemoveEquippedItemActor();
 	TArray<FName> GetEquippedItemActorTags();
 
+	bool ItemEquipped = false;
 	APickable* GetEquippedItemActor();
 	UFUNCTION(BlueprintCallable)
 	FPickableData GetEquippedItemData() const { return EquippedItemData; }
@@ -40,7 +38,6 @@ public:
 	void SetGamePaused(bool NewGamePaused);
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	//----------------------------------INPUT--------------------------------------------
@@ -60,12 +57,10 @@ protected:
 	void PauseGame(const FInputActionValue& Value);
 	bool bGamePaused = false;
 
-
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
+	//----------------------------------INPUT--------------------------------------------
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:

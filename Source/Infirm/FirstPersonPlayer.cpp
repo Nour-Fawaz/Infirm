@@ -23,7 +23,7 @@ AFirstPersonPlayer::AFirstPersonPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	//components
+	//initialize components
 	CapsuleComp = GetCapsuleComponent();
 	RootComponent = CapsuleComp;
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
@@ -70,7 +70,6 @@ APickable* AFirstPersonPlayer::GetEquippedItemActor()
 		UE_LOG(LogTemp, Warning, TEXT("EquippedItemActor is null FPP"));
 		return nullptr;
 	}
-	
 }
 
 void AFirstPersonPlayer::ClearEquippedItemData()
@@ -238,7 +237,6 @@ void AFirstPersonPlayer::PauseGame(const FInputActionValue& Value)
 	}
 }
 
-// Called every frame
 void AFirstPersonPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -373,8 +371,3 @@ void AFirstPersonPlayer::EquipItem(APickable* CurrentPickable, AFirstPersonContr
 		AFPC->CheckInventory(CurrentPickable, true);
 	}
 }
-
-
-
-
-

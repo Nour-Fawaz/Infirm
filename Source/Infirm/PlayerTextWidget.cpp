@@ -13,6 +13,9 @@
 #include "Slate/SlateBrushAsset.h"
 
 
+/*
+* function: sets correct character text and image
+*/
 void UPlayerTextWidget::SetText(FName setText)
 {
 	if (setText == "KitchenDrawer")

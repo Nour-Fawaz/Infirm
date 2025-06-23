@@ -6,15 +6,14 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 protected:
+	//----------------------------------BUTTONS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* PlayButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

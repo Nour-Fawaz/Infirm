@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Searchable.generated.h"
 
+
 UCLASS()
 class INFIRM_API ASearchable : public AActor
 {

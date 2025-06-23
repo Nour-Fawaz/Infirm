@@ -4,7 +4,7 @@
 #include "LightSource.h"
 #include "Components/PointLightComponent.h"
 
-// Sets default values
+
 ALightSource::ALightSource()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -28,4 +28,3 @@ void ALightSource::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

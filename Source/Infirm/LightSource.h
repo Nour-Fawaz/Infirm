@@ -27,5 +27,4 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Light", meta = (AllowPrivateAccess = "true"))
 	class UPointLightComponent* LightEmitter;
-
 };

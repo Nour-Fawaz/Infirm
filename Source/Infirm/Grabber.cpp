@@ -11,7 +11,7 @@
 #include "FirstPersonController.h"
 #include "Pickable.h"
 
-// Sets default values
+
 AGrabber::AGrabber()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,7 +24,6 @@ AGrabber::AGrabber()
 
 }
 
-// Called when the game starts or when spawned
 void AGrabber::BeginPlay()
 {
 	Super::BeginPlay();
@@ -50,7 +49,6 @@ void AGrabber::BeginPlay()
 	}
 }
 
-// Called every frame
 void AGrabber::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -161,4 +159,3 @@ void AGrabber::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 	UE_LOG(LogTemp, Display, TEXT("Overlap Ended in Grabber"));
 	FPC->DestroyDisplayWidget();
 }
-

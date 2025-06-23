@@ -13,6 +13,7 @@ class INFIRM_API UPlayerTextWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	//----------------------------------PUBLIC ACTIONS AND ATTRIBUTES--------------------------------------------
 	bool bDisplayText = false;
 	void SetText(FName setText);
 

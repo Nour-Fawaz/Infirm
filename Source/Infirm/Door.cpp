@@ -11,7 +11,7 @@
 #include "FirstPersonPlayer.h"
 #include "FirstPersonController.h"
 
-// Sets default values
+
 ADoor::ADoor()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -22,7 +22,6 @@ ADoor::ADoor()
 
 }
 
-// Called when the game starts or when spawned
 void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
@@ -40,11 +39,9 @@ void ADoor::BeginPlay()
 	if (APC)
 	{
 		FPP = Cast<AFirstPersonPlayer>(APC->GetPawn());
-
 	}
 }
 
-// Called every frame
 void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

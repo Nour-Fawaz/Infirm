@@ -217,5 +217,3 @@ void USafeDoorWidget::PlayButtonPressedSoundEffect()
 		}
 	}
 }
-
-

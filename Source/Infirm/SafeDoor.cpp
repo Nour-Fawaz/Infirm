@@ -13,7 +13,7 @@
 #include "FirstPersonController.h"
 #include "Components/BoxComponent.h"
 
-// Sets default values
+
 ASafeDoor::ASafeDoor()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -122,4 +122,3 @@ void ASafeDoor::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	FPC->DestroyDisplayWidget();
 }
-
