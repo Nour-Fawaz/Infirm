@@ -53,13 +53,12 @@ private:
 	TSubclassOf<class USafeDoorWidget> SafeDoorWidgetClass;
 	UPROPERTY()
 	class USafeDoorWidget* SafePanelWidget;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Safe Door", meta = (AllowPrivateAccess = "true"))
-	bool isOpen;
 
 	//----------------------------------ATTRIBUTES--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Safe Door Code", meta = (AllowPrivateAccess = "true"))
 	FString Code;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Safe Door", meta = (AllowPrivateAccess = "true"))
+	bool isOpen;
 
 	//----------------------------------MOVEMENTS--------------------------------------------
 	FRotator OriginalRotation;

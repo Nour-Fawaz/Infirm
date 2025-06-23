@@ -26,7 +26,7 @@ void UNoteWidget::SetText(APickable* CurrentPickable)
 	{
 		FilePath += "Texts/SpawnRoom.txt";
 		RetText->SetText(FText::FromString(TEXT(
-			"To my Dearest Mary,                                                 06/92\n\n"
+			"To my Dearest Mary,                                         06/92\n\n"
 			"I write to you with a heavy heart. Your sister Isabelle is growing worse by the hour, and I fear there is little more I can do to ease her suffering. Word has come that, at first light tomorrow, they will arrive to collect the sick, and they will take her with them.\n\n"
 			"Forgive me for writing in such haste, but I only just received this news.\n\n"
 			"There is no hope left, Mary, except one. She wouldn't tell me where she hid the book with the prayer. It's somewhere hard to reach. You'll need it for the ritual. But I do remember the ingredients. Don't waste a moment, begin your work as soon as this letter reaches you.\n\n"
@@ -81,7 +81,7 @@ void UNoteWidget::NativeConstruct()
 	}
 	if (ActionButton)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("action button works"), true, true, FColor::Cyan, 5.0f);
+		UE_LOG(LogTemp, Display, TEXT("Action Button for Note Widget Works"));
 		ActionButton->OnClicked.AddDynamic(this, &UNoteWidget::ActionButtonOnClicked);
 	}
 	if (NoteSoundEffect)

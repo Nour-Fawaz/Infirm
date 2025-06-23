@@ -16,23 +16,20 @@
 // Sets default values
 ASafeDoor::ASafeDoor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	//initialize components
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = StaticMesh;
 	BoxComp->SetupAttachment(StaticMesh);
-	
-
-
 }
 
-// Called when the game starts or when spawned
 void ASafeDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
+	//bind events
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ASafeDoor::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ASafeDoor::OverlapEnd);
 
@@ -42,15 +39,10 @@ void ASafeDoor::BeginPlay()
 	if (APC)
 	{
 		FPP = Cast<AFirstPersonPlayer>(APC->GetPawn());
-
 	}
-	isOpen = false;
-	
-
-	
+	isOpen = false; //all doors begin closed
 }
 
-// Called every frame
 void ASafeDoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -61,10 +53,11 @@ void ASafeDoor::Tick(float DeltaTime)
 		FRotator NewRotation = FMath::RInterpConstantTo(GetActorRotation(), TargetRotation, DeltaTime, RotationSpeed);
 		SetActorRotation(NewRotation);
 	}
-
-
 }
 
+/*
+* function: displays safe panel widget for user to input code
+*/
 void ASafeDoor::DisplaySafePanel(ASafeDoor* CurrentSafeDoor)
 {
 	if (!isOpen)
@@ -89,8 +82,9 @@ FString ASafeDoor::GetSafeCode()
 	return Code;
 }
 
-
-
+/*
+* function: destroys all widgets relevant to safe door
+*/
 void ASafeDoor::DestroyAllWidgets()
 {
 	if (SafePanelWidget)
@@ -101,41 +95,27 @@ void ASafeDoor::DestroyAllWidgets()
 	}
 }
 
+/*
+* function: called when user unlocks safe door
+*/
 void ASafeDoor::OpenSafeDoor()
 {
-	//if (!bLocked)
-	//{
-	//	Opening = true;
-	//	DestroyAllWidgets();
-	//	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	//	//remove key from player's hand IF KEY
-	//	if (FPP && FPP->ActorHasTag(Passkey)) //SECOND PART CAUSES SCREWDRIVER TO REMAIN
-	//	{
-	//		//FPP->RemoveEquippedItem();
-	//		FPC->RemoveFromInventory(Passkey); //used key -> remove from inventory
-	//		this->Tags.Remove(FName("LockedDoor")); //door no longer locked
-	//	}
-	//}
-
-	
 	FPC->CloseSafepanelWidget(this);
 	DestroyAllWidgets();
 	FPC->DestroyAllWidgets();
-	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision); //disables further player interaction
 	Opening = true;
-
 }
 
 void ASafeDoor::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor)
+	{
+		if (AFirstPersonPlayer* FirstPersonPlayer = Cast<AFirstPersonPlayer>(OtherActor))
 		{
-			if (AFirstPersonPlayer* FirstPersonPlayer = Cast<AFirstPersonPlayer>(OtherActor))
-			{
-				FPC->DisplayWidgetTextByInt(8); 
-			}
+			FPC->DisplayWidgetTextByInt(8); //displays message for player to use safe
 		}
+	}
 }
 
 void ASafeDoor::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

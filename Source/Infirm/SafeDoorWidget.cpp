@@ -13,6 +13,9 @@
 #include "Components/AudioComponent.h"
 
 
+/*
+* function: sets safe door this widget is active on
+*/
 void USafeDoorWidget::SetSafeDoor(ASafeDoor* NewSafeDoor)
 {
 	if (NewSafeDoor)
@@ -163,10 +166,8 @@ void USafeDoorWidget::ClickEnterButton()
 	if (OwningSafe)
 	{
 		PlayButtonPressedSoundEffect();
-		if (InputText && InputText->GetText().ToString() == OwningSafe->GetSafeCode())
+		if (InputText && InputText->GetText().ToString() == OwningSafe->GetSafeCode()) //if player guessed code is correct open safe
 		{
-			//FPC->OpenSafeDoor(OwningSafe->GetSafeCode(), OwningSafe); // get rid of
-			//OwningSafe->SetIsOpen(true);
 			if (SafeOpenSoundEffect)
 			{
 				SafeOpenAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), SafeOpenSoundEffect, 0.4f);
@@ -177,20 +178,21 @@ void USafeDoorWidget::ClickEnterButton()
 				}
 			}
 			OwningSafe->OpenSafeDoor();
-		
 		}
 	}
 }
 
 void USafeDoorWidget::ClickExitButton()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("CLICKED BUTTON"), true, true, FColor::Cyan, 5.0f);
-
+	UE_LOG(LogTemp, Display, TEXT("Clicked Exit Button for SafeDoorWidget"));
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	FPC = Cast<AFirstPersonController>(APC); //get player controller
 	FPC->CloseSafepanelWidget(OwningSafe);
 }
 
+/*
+* function: inserts number called into widget display and counts input
+*/
 void USafeDoorWidget::InsertNumber(FString InputInt)
 {
 	if (NumOfButtonsPressed < 4)

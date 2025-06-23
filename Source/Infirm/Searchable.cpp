@@ -9,24 +9,23 @@
 #include "FirstPersonPlayer.h"
 #include "FirstPersonController.h"
 
-// Sets default values
+
 ASearchable::ASearchable()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//initilize components
 	SearchableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickable Mesh"));
 	RootComponent = SearchableMesh;
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Component"));
 	CapsuleComp->SetupAttachment(RootComponent);
-
-
 }
 
-// Called when the game starts or when spawned
 void ASearchable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//bind events
 	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &ASearchable::OverlapBegin);
 	CapsuleComp->OnComponentEndOverlap.AddDynamic(this, &ASearchable::OverlapEnd);
 
@@ -36,51 +35,24 @@ void ASearchable::BeginPlay()
 	{
 		FPC = Cast<AFirstPersonController>(APC); //get player controller
 	}
-	
 }
 
-/* 
-Function: 
-	-Display to Player this is a searchable item if not searched
-	-Display to player that this item has already been searched
-*/
 void ASearchable::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	PickUpWidget = nullptr;
-	/*AFirstPersonPlayer* CheckActor = Cast<AFirstPersonPlayer>(OtherActor);
-	check(CheckActor);*/
-	if (FPC && DisplayWidgetClass) //check actor and display widget set
+	if (FPC)
 	{
-		
-		check(FPC); // check if controller valid
-		PickUpWidget = CreateWidget<UDisplayWidget>(FPC, DisplayWidgetClass); //create widget
-
-		//check what type of pickable
-	    if (ActorHasTag("Searched"))
-		{
-			PickUpWidget->SetText(6); //make pickup widget display "empty"
-		}
-		else if (ActorHasTag("Search"))
-		{
-			PickUpWidget->SetText(1); //make pickup widget display "search"
-		}
-		check(PickUpWidget); //check widget is valiud
-		PickUpWidget->AddToPlayerScreen(); //add to player screen
-
+		FPC->DisplayWidgetTextByInt(1);
 	}
 }
 
-/* Function: removes widget from player screen when no longer in proximity of searchable */
 void ASearchable::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (PickUpWidget)
+	if (FPC)
 	{
-		PickUpWidget->RemoveFromParent(); //remove widget from player viewport
-		PickUpWidget = nullptr;
+		FPC->DestroyDisplayWidget();
 	}
 }
 
-// Called every frame
 void ASearchable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -88,20 +60,11 @@ void ASearchable::Tick(float DeltaTime)
 }
 
 /* 
-Function:
-	-Marks the item as searched
-	-sets equipped item as hidden item (meshes)
+* function: marks item as search and displays hidden message, and/or gives player found item
 */
 void ASearchable::SearchItem()
 {
-	//indicate that this actor has been searched
-	if (PickUpWidget)
-	{
-		PickUpWidget->RemoveFromParent(); //remove widget from player viewport
-		PickUpWidget = nullptr;
-	}
-
-	//RETURN THE ITEMFOUND like if you found incantation return "Incantion"
+	//displays character message for item
 	if (HasHiddenMessage)
 	{
 		FPC->DisplayerPlayerTextWidget(HiddenItemTag);
@@ -115,27 +78,22 @@ void ASearchable::SearchItem()
 		this->Tags.Empty();
 		this->Tags.Add("Searched");
 	}
-	//set the equipped item mesh equal to the hidden mesh
+	
+	//if searchable has hidden item add it to player inventory
 	if (HasHiddenItem)
 	{
-		//FString MeshName = HiddenMesh->GetName();
-		UKismetSystemLibrary::PrintString(this, HiddenItemTag.ToString() , true, true, FColor::Blue, 5.0f);
+		UE_LOG(LogTemp, Display, TEXT("Searchable has hidden item: %s"), *HiddenItemTag.ToString());
 		FPC->CheckInventoryName(HiddenItemTag);
-
 	}
 }
 
-/* Function: Destroys all widgets displayed on player screen contributing from this class*/
+/* 
+* function: destroys all widgets relevant to searchable
+*/
 void ASearchable::DestroyAllWidgets()
 {
-	if (PickUpWidget)
+	if (FPC)
 	{
-		PickUpWidget->RemoveFromParent();
-		PickUpWidget = nullptr;
+		FPC->DestroyDisplayWidget();
 	}
 }
-
-void ASearchable::CheckSearchableWidget(ASearchable* CurrentsSearchable)
-{
-}
-

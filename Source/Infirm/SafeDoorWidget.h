@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "SafeDoorWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API USafeDoorWidget : public UUserWidget
 {
@@ -19,7 +17,7 @@ public:
 
 protected:
 
-	//Buttons
+	//----------------------------------BUTTONS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button0;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -47,17 +45,16 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ExitButton;
 
-	//Code 
+	//----------------------------------CODE-------------------------------------------- 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* InputText;
 	FString UserInput;
 	FText UserInputText;
 	
-
-
 private:
 	virtual void NativeConstruct() override;
 
+	//----------------------------------BUTTON FUNCTIONS--------------------------------------------
 	UFUNCTION()
 	void ClickButton0();
 	UFUNCTION()
@@ -85,16 +82,17 @@ private:
 	UFUNCTION()
 	void ClickExitButton();
 
-
+	//----------------------------------CODE FUNCTIONS AND ATTRIBUTES--------------------------------------------
 	UFUNCTION()
 	void InsertNumber(FString InputInt);
 	UPROPERTY()
 	int32 NumOfButtonsPressed = 0;
 
+	//----------------------------------ASSOCIATED ACTORS--------------------------------------------
 	class AFirstPersonController* FPC;
 	class ASafeDoor* OwningSafe;
 
-	//sound effects
+	//----------------------------------AUDIO--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* ButtonPressedSoundEffect;
 	UPROPERTY()
@@ -104,6 +102,4 @@ private:
 	class USoundBase* SafeOpenSoundEffect;
 	UPROPERTY()
 	class UAudioComponent* SafeOpenAudioComponent;
-	
-	
 };
