@@ -6,9 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "PickableData.generated.h"
 
-/**
- * 
- */
+
 USTRUCT(BlueprintType)
 struct FPickableData
 {

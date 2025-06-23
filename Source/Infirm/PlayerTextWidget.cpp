@@ -13,6 +13,9 @@
 #include "Slate/SlateBrushAsset.h"
 
 
+/*
+* function: sets correct character text and image
+*/
 void UPlayerTextWidget::SetText(FName setText)
 {
 	if (setText == "KitchenDrawer")
@@ -83,14 +86,14 @@ void UPlayerTextWidget::NativeConstruct()
 	}
 	if (ActionButton)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("action button works"), true, true, FColor::Cyan, 5.0f);
+		UE_LOG(LogTemp, Display, TEXT("Action Button for PlayerTextWidget Works"));
 		ActionButton->OnClicked.AddDynamic(this, &UPlayerTextWidget::ActionButtonOnClicked);
 	}
 }
 
 void UPlayerTextWidget::ActionButtonOnClicked()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("CLICKED BUTTON"), true, true, FColor::Cyan, 5.0f);
+	UE_LOG(LogTemp, Display, TEXT("Action button in PlayerTExtWidget pressed."));
 
 	APlayerController* APC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	FPC = Cast<AFirstPersonController>(APC); //get player controller
@@ -99,11 +102,11 @@ void UPlayerTextWidget::ActionButtonOnClicked()
 
 void UPlayerTextWidget::SetImage(FString ImageURL)
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("loading texture"), true, true, FColor::Cyan, 5.0f);
+	UE_LOG(LogTemp, Display, TEXT("Loading image for PlayerTextWidget"));
 	UTexture2D* Texture = LoadObject<UTexture2D>(nullptr, *ImageURL);
 	if (Texture && ImageContainer)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("texture loaded"), true, true, FColor::Cyan, 5.0f);
+		UE_LOG(LogTemp, Display, TEXT("Image loaded for PlayerTextWidget"));
 		FSlateBrush Brush;
 		Brush.SetResourceObject(Texture);
 		Brush.ImageSize = FVector2D(Texture->GetSizeX(), Texture->GetSizeY());

@@ -6,9 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "EndGameModeBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API AEndGameModeBase : public AGameModeBase
 {
@@ -18,7 +16,6 @@ public:
 	virtual void BeginPlay() override;
 
 private:
-
 	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UEndMessageWidget> EndMessageWidgetClass;

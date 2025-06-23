@@ -6,39 +6,37 @@
 #include "Blueprint/UserWidget.h"
 #include "NoteWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API UNoteWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-
 public:
+	//----------------------------------PUBLIC ACTIONS AND ATTRIBUTES--------------------------------------------
 	bool bOpenNote = false;
 	void SetText(class APickable* CurrentPickable);
 
 protected:
-
-
+	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ActionButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* RetText;
 	
-
 private:
 	virtual void NativeConstruct() override;
+
+	//----------------------------------BUTTON FUNCTIONS--------------------------------------------
 	UFUNCTION()
 	void ActionButtonOnClicked();
 
+	//----------------------------------PLAYER--------------------------------------------
 	class AFirstPersonController* FPC;
 
-	//sound effects
+	//----------------------------------AUDIO--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* NoteSoundEffect;
 	UPROPERTY()
 	class UAudioComponent* MusicAudioComponent;
-	
 };

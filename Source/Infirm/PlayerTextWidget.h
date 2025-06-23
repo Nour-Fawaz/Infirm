@@ -6,19 +6,19 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerTextWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API UPlayerTextWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
+	//----------------------------------PUBLIC ACTIONS AND ATTRIBUTES--------------------------------------------
 	bool bDisplayText = false;
 	void SetText(FName setText);
 
 protected:
+	//----------------------------------WIDGET COMPONENTS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ActionButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -26,15 +26,15 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UImage* ImageContainer;
 
-
 private:
 	virtual void NativeConstruct() override;
+
+	//----------------------------------WIDGET COMPONENT ACTIONS--------------------------------------------
 	UFUNCTION()
 	void ActionButtonOnClicked();
-
-	class AFirstPersonController* FPC;
-
 	UFUNCTION()
 	void SetImage(FString ImageURL);
-	
+
+	//----------------------------------PLAYER--------------------------------------------
+	class AFirstPersonController* FPC;
 };

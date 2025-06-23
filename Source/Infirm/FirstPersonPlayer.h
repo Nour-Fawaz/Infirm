@@ -13,33 +13,31 @@ class UInputMappingContext;
 class UInputAction;
 class UCameraComponent;
 
+
 UCLASS()
 class INFIRM_API AFirstPersonPlayer : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AFirstPersonPlayer();
 
-	//holdingSomething
-	bool ItemEquipped = false;
-
+	//----------------------------------INVENTORY--------------------------------------------
 	void RemoveEquippedItem();
 	void RemoveEquippedItemActor();
 	TArray<FName> GetEquippedItemActorTags();
 
+	bool ItemEquipped = false;
 	APickable* GetEquippedItemActor();
 	UFUNCTION(BlueprintCallable)
 	FPickableData GetEquippedItemData() const { return EquippedItemData; }
 	UFUNCTION()
 	void ClearEquippedItemData();
 
-
+	//----------------------------------WIDGETS--------------------------------------------
 	void SetGamePaused(bool NewGamePaused);
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	//----------------------------------INPUT--------------------------------------------
@@ -59,12 +57,10 @@ protected:
 	void PauseGame(const FInputActionValue& Value);
 	bool bGamePaused = false;
 
-
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
+	//----------------------------------INPUT--------------------------------------------
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
@@ -79,11 +75,7 @@ private:
 	APickable* EquippedItemActor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* SkeletalMesh;
-	//----------------------------------------------------------------------------------------
 	
-
-
-
 	//----------------------------------EVENTS--------------------------------------------
 	UFUNCTION()
 	void DropEquippedItem(APickable* ToPickUp);
@@ -96,11 +88,9 @@ private:
 	UPROPERTY()
 	FPickableData EquippedItemData;
 
-
 	//----------------------------------SOUND EFFECTS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* PickUpSoundEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* PutDownSoundEffect;
-
 };

@@ -14,16 +14,12 @@ class INFIRM_API ADoor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ADoor();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
 	//----------------------------------PUBLIC ACTIONS--------------------------------------------
@@ -42,7 +38,6 @@ private:
 	AFirstPersonPlayer* FPP;
 	UPROPERTY()
 	class AFirstPersonController* FPC;
-
 
 	//----------------------------------ATTRIBUTES--------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "Attributes")
@@ -72,13 +67,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* OpenDoorSoundEffect;
 	
-	
 	//----------------------------------EVENTS--------------------------------------------
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-
-
 };

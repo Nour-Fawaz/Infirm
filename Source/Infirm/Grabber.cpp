@@ -11,10 +11,9 @@
 #include "FirstPersonController.h"
 #include "Pickable.h"
 
-// Sets default values
+
 AGrabber::AGrabber()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//component initialization
@@ -25,11 +24,11 @@ AGrabber::AGrabber()
 
 }
 
-// Called when the game starts or when spawned
 void AGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//bind events
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AGrabber::OverlapBegin); //bind FUNCTION that is called to THIS object when overlapping other stuff
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &AGrabber::OverlapEnd);
 	
@@ -50,7 +49,6 @@ void AGrabber::BeginPlay()
 	}
 }
 
-// Called every frame
 void AGrabber::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -161,4 +159,3 @@ void AGrabber::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 	UE_LOG(LogTemp, Display, TEXT("Overlap Ended in Grabber"));
 	FPC->DestroyDisplayWidget();
 }
-

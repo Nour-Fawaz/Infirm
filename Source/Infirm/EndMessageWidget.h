@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "EndMessageWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API UEndMessageWidget : public UUserWidget
 {
@@ -18,7 +16,6 @@ public:
     //----------------------------------PUBLIC ACTIONS--------------------------------------------
     UFUNCTION(BlueprintCallable)
     void PlayFadeIn();
-
     UFUNCTION(BlueprintCallable)
     void PlayFadeOut();
 
@@ -33,12 +30,9 @@ protected:
     class UButton* ContinueButton;
 
 private:
-
     //----------------------------------EFFECTS--------------------------------------------
     UPROPERTY(meta = (BindWidgetAnim), Transient)
     UWidgetAnimation* FadeIn;
-
     UPROPERTY(meta = (BindWidgetAnim), Transient)
     UWidgetAnimation* FadeOut;
-	
 };

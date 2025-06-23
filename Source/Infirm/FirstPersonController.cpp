@@ -23,7 +23,6 @@ void AFirstPersonController::BeginPlay()
 	if (PC)
 	{
 		FPP = Cast<AFirstPersonPlayer>(PC->GetPawn());
-		
 	}
 	FString CurrentLevel = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
 
@@ -47,7 +46,6 @@ void AFirstPersonController::BeginPlay()
 		SetInputMode(FInputModeGameOnly());
 		SetShowMouseCursor(false);
 	}
-	
 }
 
 void AFirstPersonController::ReadNoteWidget(APickable* CurrentPickable)
@@ -66,7 +64,6 @@ void AFirstPersonController::ReadNoteWidget(APickable* CurrentPickable)
 		SetInputMode(FInputModeGameAndUI());
 		SetShowMouseCursor(true);
 	}
-
 }
 
 void AFirstPersonController::CloseNoteWidget()
@@ -337,7 +334,7 @@ void AFirstPersonController::CheckExistingQidgets()
 
 /*
 * function: adds/removes item from inventory through pickables
-* NOTE: Tags will be treated as part of Player Inventory. Booleans will be constants (once an item is obtained it will remain).
+* NOTE: Tags will be treated as part of Player Inventory.
 */
 void AFirstPersonController::CheckInventory(APickable* PickedItem, bool bPicked)
 {
@@ -383,7 +380,6 @@ void AFirstPersonController::CheckInventory(APickable* PickedItem, bool bPicked)
 				FPP->Tags.Add("SafeKey");
 			}
 		}
-		
 	}
 	//using item 
 	else
@@ -441,7 +437,6 @@ void AFirstPersonController::CheckInventoryName(const FName& NewItem)
 		{
 			FPP->Tags.Add("GarageKey");
 		}
-		
 	}
 	if (NewItem == "SafeKey")
 	{
@@ -451,7 +446,6 @@ void AFirstPersonController::CheckInventoryName(const FName& NewItem)
 			FPP->Tags.Add("SafeKey");
 		}
 	}
-
 }
 
 /*
@@ -479,7 +473,6 @@ void AFirstPersonController::RemoveFromInventory(const FName ItemToRemove)
 	{
 		HaveIncantation = false;
 		UE_LOG(LogTemp, Display, TEXT("Incantation bool status: %d"), HaveIncantation);
-
 	}
 	else if (ItemToRemove == "KitchenKey")
 	{
@@ -532,6 +525,9 @@ bool AFirstPersonController::InInventory(FName ItemToCheck)
 	return false;
 }
 
+/*
+* function: sets if player has item through tags array
+*/
 void AFirstPersonController::CheckInventoryByTag(TArray<FName> ItemTags, bool HaveItem)
 {
 	for (FName& ItemTag : ItemTags)
@@ -569,7 +565,6 @@ void AFirstPersonController::CheckInventoryByTag(TArray<FName> ItemTags, bool Ha
 
 			HaveKitchenKey = HaveItem;
 			UE_LOG(LogTemp, Display, TEXT("KitchenKey bool status: %d"), HaveKitchenKey);
-
 		}
 	}
 }

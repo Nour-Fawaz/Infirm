@@ -6,9 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "DisplayWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INFIRM_API UDisplayWidget : public UUserWidget
 {
@@ -16,13 +13,9 @@ class INFIRM_API UDisplayWidget : public UUserWidget
 
 
 protected:
-
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* RetText;
 
 public:
-
 	void SetText(int textVal);
-	
-	
 };

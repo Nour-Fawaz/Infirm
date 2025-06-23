@@ -20,7 +20,6 @@ void AEndGameModeBase::BeginPlay()
 	}
 
 	FString CurrentLevel = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
-
 	//check level then display end game widget
 	if (CurrentLevel == "EndGame" && EndMessageWidgetClass)
 	{

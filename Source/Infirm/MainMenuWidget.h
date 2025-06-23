@@ -6,15 +6,14 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 protected:
+	//----------------------------------BUTTONS--------------------------------------------
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* PlayButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -25,10 +24,10 @@ protected:
 private:
 	virtual void NativeConstruct() override;
 
-	//player
+	//----------------------------------PLAYER--------------------------------------------
 	class AFirstPersonController* FPC;
 
-	//button functions
+	//----------------------------------BUTTON FUNCTIONS--------------------------------------------
 	UFUNCTION()
 	void PlayButtonOnClicked();
 	UFUNCTION()
@@ -36,16 +35,15 @@ private:
 	UFUNCTION()
 	void ExitButtonOnClicked();
 
-	//widgets
+	//----------------------------------WIDGETS--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UHowToPlayWidget> HowToPlayWidgetClass;
 	UPROPERTY()
 	class UHowToPlayWidget* HowToPlayWidget;
 
-	//music
+	//----------------------------------AUDIO--------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio", meta = (AllowPrivateAccess = "true"))
 	class USoundBase* MainMenuMusic;
 	UPROPERTY()
 	class UAudioComponent* MusicAudioComponent;
-	
 };

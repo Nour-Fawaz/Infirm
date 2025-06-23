@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "HowToPlayWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class INFIRM_API UHowToPlayWidget : public UUserWidget
 {
