@@ -6,7 +6,7 @@
 
 <img src="Images/candle.gif">
 <img src="Images/drawer.gif">
-<img src="Images/safe.gif" width="90%">
+<img src="Images/safe.gif" width="96%">
 
 ## 🖥️ Development
 **Infirm** was developed as a single-player experience with a focus on creating an eerie, atmospheric world inspired by Colonial Massachusetts in the 1600s. While much of the setting draws from that time, small details such as unusual objects and modern conveniences, quietly disrupt the sense of place, leaving the player to question when, exactly, the story is meant to unfold.
