@@ -32,6 +32,9 @@ Click [here](https://drive.google.com/drive/u/1/folders/1J4NOSFp35yeTLK3PGWlECyo
 3. Unzip the folder and navigate to the Windows folder
 4. Open Infirm.exe and enjoy!
 
+## 📝 Notes
+- Source code provided upon request
+
 ## 🛠️ Credits
 ### 🎵 Music
 **Main Menu Theme:** "Scott Buckley - Balefire" is under a Creative Commons (BY 3.0) license:
